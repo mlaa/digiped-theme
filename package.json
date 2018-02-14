@@ -105,6 +105,7 @@
   "dependencies": {
     "jquery": "^3.3.1",
     "muuri": "^0.5.3",
-    "tachyons-sass": "~4.7"
+    "tachyons-sass": "~4.7",
+    "web-animations-js": "^2.3.1"
   }
 }
