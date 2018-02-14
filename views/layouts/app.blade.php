@@ -3,13 +3,14 @@
   @include('partials.head')
   <body @php(body_class( 'sans-serif' ))>
     @php(do_action('get_header'))
+    @include('partials.header')
     <div class="wrap container" role="document">
-      <div class="content">
-        <main class="main grid cf">
+      <div class="content cf">
+        <main class="main grid cf fr w-70">
           @yield('content')
         </main>
         @if (App\display_sidebar())
-          <aside class="sidebar">
+          <aside class="sidebar fl w-30">
             @include('partials.sidebar')
           </aside>
         @endif
