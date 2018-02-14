@@ -28,8 +28,9 @@ jQuery(document).ready(() => routes.loadEvents());
 import Muuri from '../../../node_modules/muuri/muuri.min.js';
 jQuery(document).ready(function() {
   var grid = new Muuri('.grid', {
-		dragEnabled: true,
-	});
+    dragEnabled: true,
+    fillGaps: true,
+  });
 
   grid.getElement(); //only here to fool eslint
 });
