@@ -22,3 +22,14 @@ const routes = new Router({
 
 // Load Events
 jQuery(document).ready(() => routes.loadEvents());
+
+
+// draggable tiles
+import Muuri from '../../../node_modules/muuri/muuri.min.js';
+jQuery(document).ready(function() {
+  var grid = new Muuri('.grid', {
+		dragEnabled: true,
+	});
+
+  grid.getElement(); //only here to fool eslint
+});

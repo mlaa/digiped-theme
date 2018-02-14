@@ -12,7 +12,12 @@ use Roots\Sage\Template\BladeProvider;
  */
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('sage/main.css', asset_path('styles/main.css'), false, null);
-    wp_enqueue_script('sage/main.js', asset_path('scripts/main.js'), ['jquery'], null, true);
+
+    wp_enqueue_script('web-animations-js', asset_path('../node_modules/web-animations-js/web-animations.min.js'), false, null, true);
+    wp_enqueue_script('hammerjs', asset_path('../node_modules/hammerjs/hammer.min.js'), false, null, true);
+    wp_enqueue_script('muuri', asset_path('../node_modules/muuri/muuri.min.js'), ['web-animations-js', 'hammerjs'], null, true);
+
+    wp_enqueue_script('sage/main.js', asset_path('scripts/main.js'), ['jquery', 'muuri'], null, true);
 }, 100);
 
 /**
