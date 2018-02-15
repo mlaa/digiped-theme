@@ -28,6 +28,31 @@ main article {
   max-width: 200px; //todo avoid px? need to handle overflow
 
   @extend .ma2;
+
+  .thumbnail,
+  .author,
+  .tags {
+    @extend .di;
+  }
+
+  // expanded detail view
+  &.open {
+    max-width: unset;
+
+    .excerpt {
+      @extend .di;
+    }
+
+    > div > div {
+      @extend .fr;
+      @extend .w-70;
+    }
+
+    > div > div:first-child {
+      @extend .fl;
+      @extend .w-30;
+    }
+  }
 }
 
 // list items
@@ -38,11 +63,5 @@ main article {
 
   h2 {
     @extend .ma0;
-  }
-
-  img,
-  i,
-  ul {
-    @extend .dn;
   }
 }

@@ -37,9 +37,13 @@ jQuery(document).ready(function() {
 
   var recalc = function() {
     grids.forEach(function(muuri) {
+      muuri.refreshItems(); // only necessary when changing item dimensions, not sorting
       muuri.layout();
     });
   }
+
+  // temporary debug helper
+  $( 'aside a' ).on('click', recalc);
 
   // sidebar collections
   $('.my-digiped div > div').each(function(){
