@@ -1,10 +1,48 @@
-.item {
-  max-width: 200px; //todo avoid px? need to handle tag/title overflow
+article {
+  // functional styles for muuri drag/drop
+  @extend .db;
+  @extend .absolute;
+  @extend .z-1;
+  @extend .fl;
 
-  //tags
+  // styles common to all card sizes
+  @extend .ba;
+  @extend .bg-white;
+  @extend .black;
+
+  // title, tags
+  a {
+    @extend .dim;
+    @extend .mid-gray;
+  }
+
+  // tags
   li a {
     @extend .link;
     @extend .mr2;
   }
 }
 
+// small card
+main article {
+  max-width: 200px; //todo avoid px? need to handle overflow
+
+  @extend .ma2;
+}
+
+// list items
+.my-digiped article {
+  @extend .db;
+  @extend .w-100;
+  @extend .mt1;
+
+  h2 {
+    @extend .ma0;
+  }
+
+  img,
+  i,
+  ul {
+    @extend .dn;
+  }
+}

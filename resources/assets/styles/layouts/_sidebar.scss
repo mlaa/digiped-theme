@@ -1,0 +1,10 @@
+aside {
+  .my-digiped {
+    div {
+      // drop zones
+      > div {
+        min-height: 1rem;
+      }
+    }
+  }
+}

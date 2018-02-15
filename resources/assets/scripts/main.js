@@ -24,12 +24,40 @@ const routes = new Router({
 jQuery(document).ready(() => routes.loadEvents());
 
 
-// draggable tiles
+// draggable cards
 import Muuri from '../../../node_modules/muuri/muuri.min.js';
 jQuery(document).ready(function() {
-  var grid = new Muuri('.grid', {
-    dragEnabled: true,
+  // Multigrid drag sorting.
+  var grids = [];
+
+  // eslint-disable-next-line
+  function getAllGrids(item) {
+    return grids;
+  }
+
+  var recalc = function() {
+    grids.forEach(function(muuri) {
+      muuri.layout();
+    });
+  }
+
+  // sidebar collections
+  $('.my-digiped div > div').each(function(){
+    var muuri = new Muuri(this, {
+      items: 'article',
+      dragEnabled: true,
+      dragSort: getAllGrids,
+    })
+    .on('dragReleaseEnd', recalc);
+    grids.push(muuri);
   });
 
-  grid.getElement(); //only here to fool eslint
+  // main grid
+  var mmuuri = new Muuri('main', {
+    dragEnabled: true,
+    dragSort: getAllGrids,
+  })
+  .on('dragReleaseEnd', recalc);
+
+  grids.push(mmuuri);
 });

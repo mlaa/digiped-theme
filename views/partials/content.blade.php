@@ -1,5 +1,5 @@
-<article @php(post_class( 'item db absolute z-1 fl ba ma2 bg-white black' ))>
-  <div class="item-content relative w-100 h-100">
+<article @php(post_class())>
+  <div class="relative">
     @if(has_post_thumbnail())
       @php(the_post_thumbnail([200, 150]))
     @else
