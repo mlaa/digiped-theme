@@ -47,6 +47,7 @@ jQuery(document).ready(function() {
       items: 'article',
       dragEnabled: true,
       dragSort: getAllGrids,
+      dragSortInterval: 10,
     })
     .on('dragReleaseEnd', recalc);
     grids.push(muuri);
@@ -56,6 +57,7 @@ jQuery(document).ready(function() {
   var mmuuri = new Muuri('main', {
     dragEnabled: true,
     dragSort: getAllGrids,
+    dragSortInterval: 10,
   })
   .on('dragReleaseEnd', recalc);
 
