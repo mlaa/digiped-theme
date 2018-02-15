@@ -6,7 +6,7 @@
     @include('partials.header')
     <div class="wrap container" role="document">
       <div class="content cf">
-        <main class="main grid cf fr w-70 pa2 nr1 nl1">
+        <main class="main grid relative cf fr w-70 pa2 nr1 nl1">
           @yield('content')
         </main>
         @if (App\display_sidebar())
