@@ -8,8 +8,8 @@
         @endif
     </div>
     <div class="meta pv2 ph3">
-      <h2 class="ma0 mb1 f6"><a href="@php(the_permalink())" class="link">@php(the_title())</a></h2>
-      <div class="author f7 mb1 dn">
+      <h2 class="ma0 mb2 f6"><a href="@php(the_permalink())" class="link">@php(the_title())</a></h2>
+      <div class="author f7 mb2 dn">
         <i class="fas fa-user"></i>
         @php(the_author())
       </div>

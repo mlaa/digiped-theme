@@ -32,7 +32,7 @@ main article {
   .thumbnail,
   .author,
   .tags {
-    @extend .di;
+    @extend .db;
   }
 
   // expanded detail view
@@ -40,7 +40,7 @@ main article {
     max-width: unset;
 
     .excerpt {
-      @extend .di;
+      @extend .db;
     }
 
     > div > div {

@@ -15,7 +15,7 @@
         <div class="relative cf"></div>
       </div>
     @endforeach
-    <br><a class="link" onclick="javascript:jQuery('article').addClass('open');">grow all cards</a>
-    <br><a class="link" onclick="javascript:jQuery('article').removeClass('open');">shrink all cards</a>
+    <br><a class="link" href="#" onclick="javascript:jQuery('article').addClass('open');return false;">grow all cards</a><br>
+    <br><a class="link" href="#" onclick="javascript:jQuery('article').removeClass('open');return false;">shrink all cards</a><br>
   </div>
 </div>
