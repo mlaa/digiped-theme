@@ -11,6 +11,7 @@ use Roots\Sage\Template\BladeProvider;
  * Theme assets
  */
 add_action('wp_enqueue_scripts', function () {
+    wp_enqueue_style('font-awesome', '//use.fontawesome.com/releases/v5.0.6/css/all.css');
     wp_enqueue_style('sage/main.css', asset_path('styles/main.css'), false, null);
 
     wp_enqueue_script('web-animations-js', asset_path('../node_modules/web-animations-js/web-animations.min.js'), false, null, true);

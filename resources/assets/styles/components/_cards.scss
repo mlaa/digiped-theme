@@ -1,0 +1,10 @@
+.item {
+  max-width: 200px; //todo avoid px? need to handle tag/title overflow
+
+  //tags
+  li a {
+    @extend .link;
+    @extend .mr2;
+  }
+}
+

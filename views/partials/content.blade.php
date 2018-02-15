@@ -1,9 +1,16 @@
 <article @php(post_class( 'item db absolute z-1 fl ba ma2 bg-white black' ))>
   <div class="item-content relative w-100 h-100">
-    <img src="https://place.cat/c/200/200">
-    <header class="ph2 nr1 nl1">
-      <h2 class="entry-title"><a href="{{ get_permalink() }}" class="link">{{ get_the_title() }}</a></h2>
-      @php(the_tags())
+    @if(has_post_thumbnail())
+      @php(the_post_thumbnail([200, 150]))
+    @else
+      <img src="//via.placeholder.com/200x150">
+    @endif
+    <header class="pv2 ph3">
+      <h2 class="entry-title ma0 mb1 f6"><a href="{{ get_permalink() }}" class="link">{{ get_the_title() }}</a></h2>
+      <i class="fas fa-tag mr1 f7"></i>
+      <ul class="list di ttu ma0 pa0 f7">
+        @php(the_tags('<li class="dib">', '</li><li class="dib">', '</li>'))
+      </ul>
       {{-- @include('partials/entry-meta') --}}
     </header>
     {{--
