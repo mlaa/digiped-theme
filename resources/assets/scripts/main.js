@@ -22,3 +22,7 @@ const routes = new Router({
 
 // Load Events
 jQuery(document).ready(() => routes.loadEvents());
+
+// stop infinite loops when updating JS with browsersync on
+// https://discourse.roots.io/t/sage-9-changes-in-js-and-browsersync/8893
+if (module.hot) { module.hot.accept(); }

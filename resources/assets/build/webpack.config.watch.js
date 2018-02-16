@@ -16,7 +16,8 @@ if (url.parse(target).protocol === 'https:') {
 module.exports = {
   output: {
     pathinfo: true,
-    publicPath: config.proxyUrl + config.publicPath,
+    //publicPath: config.proxyUrl + config.publicPath,
+    publicPath: config.devUrl + config.publicPath,
   },
   devtool: '#cheap-module-source-map',
   stats: false,
@@ -34,3 +35,5 @@ module.exports = {
     }),
   ],
 };
+
+if (module.hot) { module.hot.accept(); }
