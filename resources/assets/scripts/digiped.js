@@ -2,23 +2,19 @@ import Muuri from 'muuri';
 
 export default class DigiPed {
   constructor() {
+    var mainGrid = $('main');
+    var collectionGrids = $('.my-digiped div > div');
     this.grids = [];
 
-    // temporary debug helper
-    $( 'aside a' ).on('click', this.redraw.bind(this));
+    this.setupGrid(mainGrid[0]);
+    for (var i in collectionGrids.toArray()) {
+      this.setupGrid(collectionGrids[i]);
+    }
 
-    // main grid
-    this.addGrid('main');
-
-    // sidebar collections
-    // 'this' scope is different, use 'inst'
-    var inst = this;
-    $('.my-digiped div > div').map((i, elem) => {
-      inst.addGrid(elem);
-    });
+    $( 'aside a' ).on('click', this.redraw.bind(this)); // temporary debug helper
   }
 
-  addGrid(elem, options = {}) {
+  setupGrid(elem, options = {}) {
     var inst = this;
     var defaultOptions = {
       dragEnabled: true,
