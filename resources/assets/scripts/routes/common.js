@@ -1,6 +1,9 @@
+import DigiPed from '../digiped';
+
 export default {
   init() {
     // JavaScript to be fired on all pages
+    new DigiPed;
   },
   finalize() {
     // JavaScript to be fired on all pages, after page specific JS is fired

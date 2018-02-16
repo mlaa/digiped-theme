@@ -1,43 +1,44 @@
 import Muuri from 'muuri';
 
-export function init() {
-  // Multigrid drag sorting.
-  var grids = [];
+export default class DigiPed {
+  constructor() {
+    // Multigrid drag sorting.
+    var grids = [];
 
-  // eslint-disable-next-line
-  function getAllGrids(item) {
-    return grids;
+    // temporary debug helper
+    $( 'aside a' ).on('click', DigiPed.redraw);
+
+    // sidebar collections
+    $('.my-digiped div > div').each(function(){
+      var muuri = new Muuri(this, {
+        items: 'article',
+        dragEnabled: true,
+        dragSort: DigiPed.getAllGrids,
+        dragSortInterval: 10,
+      })
+      .on('dragReleaseEnd', DigiPed.redraw);
+      grids.push(muuri);
+    });
+
+    // main grid
+    var mmuuri = new Muuri('main', {
+      dragEnabled: true,
+      dragSort: DigiPed.getAllGrids,
+      dragSortInterval: 10,
+    })
+    .on('dragReleaseEnd', DigiPed.redraw);
+
+    DigiPed.grids.push(mmuuri);
   }
 
-  var recalc = function() {
-    grids.forEach(function(muuri) {
+  getAllGrids() {
+    return DigiPed.grids;
+  }
+
+  redraw() {
+    DigiPed.grids.forEach(function(muuri) {
       muuri.refreshItems(); // only necessary when changing item dimensions, not sorting
       muuri.layout();
     });
   }
-
-  // temporary debug helper
-  $( 'aside a' ).on('click', recalc);
-
-  // sidebar collections
-  $('.my-digiped div > div').each(function(){
-    var muuri = new Muuri(this, {
-      items: 'article',
-      dragEnabled: true,
-      dragSort: getAllGrids,
-      dragSortInterval: 10,
-    })
-    .on('dragReleaseEnd', recalc);
-    grids.push(muuri);
-  });
-
-  // main grid
-  var mmuuri = new Muuri('main', {
-    dragEnabled: true,
-    dragSort: getAllGrids,
-    dragSortInterval: 10,
-  })
-  .on('dragReleaseEnd', recalc);
-
-  grids.push(mmuuri);
 }

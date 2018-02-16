@@ -19,8 +19,5 @@
     @php(do_action('get_footer'))
     @include('partials.footer')
     @php(wp_footer())
-<script id="__bs_script__">//<![CDATA[
-    document.write("<script async src='//HOST:3000/browser-sync/browser-sync-client.2.15.0.js'><\/script>".replace("HOST", location.hostname));
-    //]]></script>
   </body>
 </html>
