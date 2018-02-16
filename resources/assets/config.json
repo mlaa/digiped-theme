@@ -10,7 +10,7 @@
   },
   "publicPath": "/app/themes/digiped-theme",
   "devUrl": "https://digitalpedagogy.mla.rumi.mlacommons.org",
-  "proxyUrl": "https://localhost:3000",
+  "proxyUrl": "https://digitalpedagogy.mla.rumi.mlacommons.org:3000",
   "cacheBusting": "[name]_[hash:8]",
   "watch": [
     "app/**/*.php",
