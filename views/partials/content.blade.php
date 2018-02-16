@@ -10,11 +10,11 @@
     <div class="meta pv2 ph3">
       <h2 class="ma0 mb2 f6"><a href="@php(the_permalink())" class="link">@php(the_title())</a></h2>
       <div class="author f7 mb2 dn">
-        <i class="fas fa-user"></i>
+        <i class="fa fa-user"></i>
         @php(the_author())
       </div>
       <div class="tags f7 dn">
-          <i class="fas fa-tag mr1 f7"></i>
+          <i class="fa fa-tag mr1 f7"></i>
           <ul class="list di ttu ma0 pa0 f7">
             @php(the_tags('<li class="dib">', '</li><li class="dib">', '</li>'))
           </ul>
