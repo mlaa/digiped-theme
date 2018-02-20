@@ -7,7 +7,7 @@
     <div class="wrap container" role="document">
       <div class="content cf flex">
         <main class="main w-70 order-2">
-          <div class="controls">
+          <div class="controls f7">
             @include('partials.filter-controls')
           </div>
           <div class="grid relative">
