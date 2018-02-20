@@ -5,12 +5,17 @@
     @php(do_action('get_header'))
     @include('partials.header')
     <div class="wrap container" role="document">
-      <div class="content cf">
-        <main class="main relative cf fr w-70 pa2 nr1 nl1">
-          @yield('content')
+      <div class="content cf flex">
+        <main class="main w-70 order-2">
+          <div class="controls">
+            @include('partials.filter-controls')
+          </div>
+          <div class="grid relative">
+            @yield('content')
+          </div>
         </main>
         @if (App\display_sidebar())
-          <aside class="sidebar fl w-30">
+          <aside class="sidebar w-30 order-1">
             @include('partials.sidebar')
           </aside>
         @endif

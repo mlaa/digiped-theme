@@ -2,12 +2,11 @@ import Muuri from 'muuri';
 
 export default class DigiPed {
 
-  // Set up dragging & bind events.
   constructor() {
     // jQuery collection of grid containers.
-    this.$grids = $('main, .my-digiped div > div');
+    this.$grids = $('main .grid, .my-digiped div > div');
 
-    // Array of initialized Muuri grid instances.
+    // Array of Muuri grid instances.
     this.mgrids = [];
 
     // Initialize grids.
@@ -15,8 +14,38 @@ export default class DigiPed {
       this.initGrid(this.$grids[i]);
     }
 
+    // Bind filter controls.
+    this.initFilterMenu();
+    this.initTagFilter();
+
+    // Bind collection management controls.
+
     // temporary debug helper
     $( 'aside a' ).on('click', this.redraw.bind(this));
+  }
+
+  // Initialize filter menu to hide/show controls for each filter.
+  initFilterMenu() {
+  }
+
+  // Add all tags to filter & bind events.
+  initTagFilter() {
+    var allTags = [];
+
+    // Main grid only.
+    this.mgrids[0].getItems().map((item) => {
+      $(item.getElement()).data('post-tags').map((tag) => {
+        var tagHTML = '<li class="dib"><a class="link db ba br2 ma1 pa1 dim dark-gray" href="/tag/' + tag.slug + '">' + tag.name + '</a></li>'
+
+        if (-1 === allTags.indexOf(tagHTML)) {
+          allTags.push(tagHTML);
+        }
+      });
+    });
+
+    $('.controls .tags').html(() => {
+      return allTags.join('');
+    });
   }
 
   // Initialize a new grid with Muuri.
@@ -41,9 +70,9 @@ export default class DigiPed {
 
   // Resize grids to fit cards.
   redraw() {
-    this.mgrids.map((m) => {
-      m.refreshItems();
-      m.layout(true);
+    this.mgrids.map((grid) => {
+      grid.refreshItems();
+      grid.layout(true);
     });
   }
 

@@ -1,4 +1,5 @@
-<article @php(post_class()) data-post-id="@php(the_id())">
+{{-- TODO only include tag name, not other term data --}}
+<article @php(post_class()) data-post-id="@php(the_id())" data-post-tags="{{json_encode(get_the_tags())}}">
   <div class="relative">
     <div class="thumbnail dn">
         @if(has_post_thumbnail())
