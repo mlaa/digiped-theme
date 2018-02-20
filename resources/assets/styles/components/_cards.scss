@@ -1,25 +1,10 @@
 article {
-  // functional styles for muuri drag/drop
-  @extend .db;
-  @extend .absolute;
-  @extend .z-1;
-  @extend .fl;
-
-  // styles common to all card sizes
-  @extend .ba;
-  @extend .bg-white;
-  @extend .black;
-
-  // title, tags
-  a {
-    @extend .dim;
-    @extend .mid-gray;
-  }
-
-  // tags
-  li a {
+  // tags TODO use get_the_tags() and generate the <a> ourselves rather than this?
+  .tags a {
     @extend .link;
     @extend .mr2;
+    @extend .dim;
+    @extend .mid-gray;
   }
 }
 
@@ -27,31 +12,8 @@ article {
 main article {
   max-width: 200px; //todo avoid px? need to handle overflow
 
-  @extend .ma2;
-
-  .thumbnail,
-  .author,
-  .tags {
-    @extend .db;
-  }
-
-  // expanded detail view
-  &.open {
-    max-width: unset;
-
-    .excerpt {
-      @extend .db;
-    }
-
-    > div > div {
-      @extend .fr;
-      @extend .w-70;
-    }
-
-    > div > div:first-child {
-      @extend .fl;
-      @extend .w-30;
-    }
+  .excerpt {
+    @extend .dn;
   }
 }
 
@@ -59,9 +21,38 @@ main article {
 .my-digiped article {
   @extend .db;
   @extend .w-100;
+  @extend .ma0;
   @extend .mt1;
 
+  .thumbnail,
+  .author,
+  .tags,
+  .excerpt {
+    @extend .dn;
+  }
+
+  .meta,
   h2 {
+    @extend .pa0;
     @extend .ma0;
+  }
+}
+
+main article.open,
+.my-digiped article.open {
+  max-width: unset;
+
+  > div {
+    @extend .flex-row;
+  }
+
+  img {
+    width: 330px; // TODO scaling, px
+    height: 370px;
+    max-width: unset;
+  }
+
+  .excerpt {
+    @extend .db;
   }
 }
