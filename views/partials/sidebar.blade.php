@@ -12,7 +12,7 @@
     @foreach([1, 2] as $id)
       <div class="collection-{{$id}} ba mv2 pa1">
         <h3 class="ma0">Collection {{$id}}</h3>
-        <div class="relative cf"></div>
+        <div class="relative cf" data-collection-id="{{$id}}"></div>
       </div>
     @endforeach
     <br><a class="link" href="#" onclick="javascript:jQuery('article').addClass('open');return false;">grow all cards</a><br>

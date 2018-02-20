@@ -1,42 +1,73 @@
 import Muuri from 'muuri';
 
 export default class DigiPed {
-  constructor() {
-    var mainGrid = $('main');
-    var collectionGrids = $('.my-digiped div > div');
-    this.grids = [];
 
-    this.setupGrid(mainGrid[0]);
-    for (var i in collectionGrids.toArray()) {
-      this.setupGrid(collectionGrids[i]);
+  // Set up dragging & bind events.
+  constructor() {
+    // jQuery collection of grid containers.
+    this.$grids = $('main, .my-digiped div > div');
+
+    // Array of initialized Muuri grid instances.
+    this.mgrids = [];
+
+    // Initialize grids.
+    for (var i in this.$grids.toArray()) {
+      this.initGrid(this.$grids[i]);
     }
 
-    $( 'aside a' ).on('click', this.redraw.bind(this)); // temporary debug helper
+    // temporary debug helper
+    $( 'aside a' ).on('click', this.redraw.bind(this));
   }
 
-  setupGrid(elem, options = {}) {
+  // Initialize a new grid with Muuri.
+  initGrid(elem) {
     var inst = this;
-    var defaultOptions = {
+
+    var m = new Muuri(elem, {
       dragEnabled: true,
-      dragSort: () => {return inst.grids},
+      dragSort: () => {return inst.mgrids},
       dragSortInterval: 10,
-    };
+    });
 
-    Object.assign(options, defaultOptions);
-
-    var m = new Muuri(elem, options);
-
+    // Since cards have different dimensions in different grids, redraw after dragging.
     m.on('dragReleaseEnd', this.redraw.bind(this));
 
-    this.grids.push(m);
+    // Update affected collection(s) on the backend.
+    // TODO this actually triggers before releasing mouse, which works, but see if we can wait until actually dropped
+    m.on('receive', this.receive);
 
-    return m;
+    this.mgrids.push(m);
   }
 
+  // Resize grids to fit cards.
   redraw() {
-    this.grids.map((grid) => {
-      grid.refreshItems(); // only necessary when changing item dimensions, not sorting
-      grid.layout();
+    this.mgrids.map((m) => {
+      m.refreshItems();
+      m.layout(true);
     });
+  }
+
+  // Handler for Muuri 'receive' event.
+  // TODO success/error handling/messaging
+  receive(data) {
+    var artifactID = $(data.item.getElement()).data('post-id');
+    var fromCollectionID = $(data.fromGrid.getElement()).data('collection-id');
+    var toCollectionID = $(data.toGrid.getElement()).data('collection-id');
+
+    // Remove from origin collection.
+    if (fromCollectionID) {
+      $.ajax({
+        method: "DELETE",
+        url: '/TODO/collection/' + fromCollectionID + '/artifact/' + artifactID,
+      });
+    }
+
+    // Add to destination collection.
+    if (toCollectionID) {
+      $.ajax({
+        method: "PUT",
+        url: '/TODO/collection/' + toCollectionID + '/artifact/' + artifactID,
+      });
+    }
   }
 }

@@ -1,4 +1,4 @@
-<article @php(post_class())>
+<article @php(post_class()) data-post-id="@php(the_id())">
   <div class="relative">
     <div class="thumbnail dn">
         @if(has_post_thumbnail())
