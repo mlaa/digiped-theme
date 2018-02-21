@@ -13,6 +13,7 @@ use Roots\Sage\Template\BladeProvider;
 add_action('wp_enqueue_scripts', function () {
     wp_enqueue_style('sage/main.css', asset_path('styles/main.css'), false, null);
     wp_enqueue_script('sage/main.js', asset_path('scripts/main.js'), ['jquery'], null, true);
+    wp_localize_script( 'sage/main.js', 'wpApiSettings', [ 'nonce' => wp_create_nonce( 'wp_rest' ) ] );
 }, 100);
 
 /**
@@ -140,3 +141,11 @@ add_filter('sober/models/path', function () {
 add_filter('sober/controller/path', function () {
     return get_theme_file_path() . '/app/controllers';
 });
+
+/**
+ * Collection REST Controller
+ */
+add_action( 'rest_api_init', function() {
+    $controller = new \DigiPed_Collections_REST_Controller;
+    $controller->register_routes();
+} );

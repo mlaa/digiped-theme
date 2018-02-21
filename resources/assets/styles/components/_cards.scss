@@ -1,3 +1,12 @@
+// collection grids
+.collection {
+  // give empty grids a min height so they are able to receive dragged cards
+  .relative {
+    min-height: 0.1rem;
+  }
+}
+
+// global card styles
 article {
   // tags TODO use get_the_tags() and generate the <a> ourselves rather than this?
   .tags a {
