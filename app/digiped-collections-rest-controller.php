@@ -84,10 +84,11 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 	public function create_item( $request ) {
 		$item = $this->prepare_item_for_database( $request );
 
-		$result = DigiPed_Collection::create( $item['name'] );
+		$collection = DigiPed_Collection::create( $item['name'] );
 
-		if ( $result ) {
-			return new WP_REST_Response( $result, 201 );
+		if ( $collection ) {
+			$data = $this->prepare_item_for_response( $collection, $request );
+			return new WP_REST_Response( $data, 201 );
 		}
 
 		return new WP_Error( 'cant-create', __( 'message', 'text-domain' ), array( 'status' => 500 ) );

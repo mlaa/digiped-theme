@@ -3,35 +3,37 @@
 import Muuri from 'muuri';
 
 export default class DigiPed {
-
   constructor() {
     var inst = this;
 
+    // This flag prevents receive() from updating the backend until initCollections() has finished.
+    inst.loaded = false;
+
+    // Add WP Nonce header to all ajax requests.
+    $.ajaxSetup({
+      headers: {'X-WP-Nonce': wpApiSettings.nonce},
+    });
+
     // jQuery collection of grid containers.
-    this.$grids = $('main .grid, .my-digiped div > div');
+    inst.$grids = $('main .grid, .my-digiped div > div');
 
     // Array of Muuri grid instances.
-    this.mgrids = [];
+    inst.mgrids = [];
 
     // Initialize grids.
-    this.initGrid($('main .grid')[0]);
+    inst.initGrid($('main .grid')[0]);
 
     // Initialize collections.
-    this.initCollections()
-    // Wait to bind main grid events until collections load to avoid redundant 'receive' events.
-      .then(() => {
-        inst.initGridEvents(inst.mgrids[0]);
-        inst.redraw();
-      } );
+    inst.initCollections()
+      .then(inst.redraw.bind(inst));
 
     // Initialize controls/filters.
-    this.initCollectionControls();
-    this.initFilterMenu();
-    this.initTagFilter();
+    inst.initCollectionControls();
+    inst.initFilterMenu();
+    inst.initTagFilter();
 
     // temporary debug helper
-    $( 'aside a' ).on('click', this.redraw.bind(this));
-    window.dpj = this;
+    $( 'aside a' ).on('click', inst.redraw.bind(inst));
   }
 
   // Bind controls to manage collections.
@@ -41,18 +43,13 @@ export default class DigiPed {
     $('.create-collection').on('click', (e) => {
       var name = prompt('What should this collection be named?');
 
-      if ( name ) {
+      if (name) {
         $.ajax({
           method: "POST",
           url: '/wp-json/digiped/v1/collections',
-          headers: {'X-WP-Nonce': wpApiSettings.nonce},
-          data: {
-            name: name,
-          },
+          data: {name: name},
         })
-          .done((data) => {
-            inst.createCollection(data);
-          });
+          .done(inst.createCollection)
       }
 
       e.preventDefault();
@@ -63,12 +60,10 @@ export default class DigiPed {
   createCollection(data) {
     var container = $('<div class="ba mv2 pa1 collection">')
       .append($('<h3 class="ma0">' + data.name + '</h3>'))
-      .append($('<div class="relative cf" data-collection-id="' + data.id + '">&nbsp;</div>'));
-
+      .append($('<div class="relative cf" data-collection-id="' + data.id + '"></div>'));
     var clone = container.clone().appendTo('.my-digiped .collections');
 
     this.initGridEvents(this.initGrid(clone.find('.relative')[0]));
-
 
     return clone;
   }
@@ -76,18 +71,9 @@ export default class DigiPed {
   // Load & initialize all collections.
   initCollections() {
     var inst = this;
-
-    var promise = $.ajax({
-      url: '/wp-json/digiped/v1/collections',
-      headers: {'X-WP-Nonce': wpApiSettings.nonce},
-    });
-
-    // Move all items to appropriate grid.
-    promise.then((collections) => {
+    var moveItems = (collections) => {
       var originGrid = inst.mgrids[0];
-
       for (var i in collections) {
-
         // Create this collection element.
         inst.createCollection(collections[i]);
 
@@ -113,9 +99,12 @@ export default class DigiPed {
           }
         }
       }
-    });
 
-    return promise;
+      // Flipping this effectively enables the receive() handler for future events.
+      inst.loaded = true;
+    }
+
+    return $.ajax({url: '/wp-json/digiped/v1/collections'}).then(moveItems);
   }
 
   // Initialize filter menu to hide/show controls for each filter.
@@ -160,12 +149,17 @@ export default class DigiPed {
 
   // Bind Muuri event handlers.
   initGridEvents(grid) {
+    var inst = this;
+
     // Since cards have different dimensions in different grids, redraw after dragging.
-    grid.on('dragReleaseEnd', this.redraw.bind(this));
+    grid.on('dragReleaseEnd', inst.redraw.bind(inst));
 
     // Update affected collection(s) on the backend.
-    // TODO this actually triggers before releasing mouse, which works, but see if we can wait until actually dropped
-    grid.on('send', this.receive);
+    grid.on('receive', (data) => {
+      if (inst.loaded) {
+        inst.receive(data);
+      }
+    });
   }
 
   // Resize grids to fit cards.
@@ -182,23 +176,28 @@ export default class DigiPed {
     var artifactID = $(data.item.getElement()).data('post-id');
     var fromCollectionID = $(data.fromGrid.getElement()).data('collection-id');
     var toCollectionID = $(data.toGrid.getElement()).data('collection-id');
-
-    // Remove from origin collection.
-    if (fromCollectionID) {
-      $.ajax({
-        method: "DELETE",
-        url: '/wp-json/digiped/v1/collections/' + fromCollectionID + '/artifact/' + artifactID,
-        headers: {'X-WP-Nonce': wpApiSettings.nonce},
-      });
+    var promise = new Promise((resolve) => {resolve()});
+    var removeArtifact = () => {
+      if (fromCollectionID) {
+        promise = $.ajax({
+          method: "DELETE",
+          url: '/wp-json/digiped/v1/collections/' + fromCollectionID + '/artifact/' + artifactID,
+        });
+      }
+      return promise;
+    }
+    var addArtifact = () => {
+      if (toCollectionID) {
+        promise = $.ajax({
+          method: "PUT",
+          url:  '/wp-json/digiped/v1/collections/' + toCollectionID + '/artifact/' + artifactID,
+        });
+      }
+      return promise;
     }
 
-    // Add to destination collection.
-    if (toCollectionID) {
-      $.ajax({
-        method: "PUT",
-        url:  '/wp-json/digiped/v1/collections/' + toCollectionID + '/artifact/' + artifactID,
-        headers: {'X-WP-Nonce': wpApiSettings.nonce},
-      });
+    if (fromCollectionID !== toCollectionID) {
+      removeArtifact().done(addArtifact);
     }
   }
 }
