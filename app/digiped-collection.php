@@ -106,8 +106,8 @@ class DigiPed_Collection {
      * @return bool
      */
     function save() {
-        $this->user_meta[ $this->id ]->name = $this->name;
-        $this->user_meta[ $this->id ]->artifacts = $this->artifacts;
+        $this->user_meta[ $this->id ]['name'] = $this->name;
+        $this->user_meta[ $this->id ]['artifacts'] = array_unique( $this->artifacts );
         return update_user_meta( get_current_user_id(), self::USER_META_KEY, $this->user_meta );
     }
 
@@ -119,7 +119,7 @@ class DigiPed_Collection {
      */
     function add_artifact( int $artifact_id ) {
         // TODO array_unique
-        $this->user_meta[ $this->id ]['artifacts'][] = $artifact_id;
+        $this->artifacts[] = $artifact_id;
         return $this->save();
     }
 
@@ -131,10 +131,10 @@ class DigiPed_Collection {
      */
     function remove_artifact( int $artifact_id ) {
         $result = true;
-        $artifact_key = array_search( $artifact_id, $this->user_meta[ $this->id ]['artifacts'] );
+        $artifact_key = array_search( $artifact_id, $this->artifacts );
 
-        if ( isset( $this->user_meta[ $this->id ]['artifacts'][ $artifact_key ] ) ) {
-            unset( $this->user_meta[ $this->id ]['artifacts'][ $artifact_key ] );
+        if ( isset( $this->artifacts[ $artifact_key ] ) ) {
+            unset( $this->artifacts[ $artifact_key ] );
             $result = $this->save();
         }
 
