@@ -18,7 +18,7 @@ export default class DigiPed {
 
     // Initialize collections.
     this.initCollections()
-      // Wait to bind main grid events until collections load to avoid redundant 'receive' events.
+    // Wait to bind main grid events until collections load to avoid redundant 'receive' events.
       .then(() => {
         inst.initGridEvents(inst.mgrids[0]);
         inst.redraw();
@@ -91,21 +91,26 @@ export default class DigiPed {
         // Create this collection element.
         inst.createCollection(collections[i]);
 
+        // TODO this doesn't handle the case where cards in a collection may not be on the page due to filters, then they're just missing from the page entirely
+        // ...is that a feature? if you filter for a certain tag would you only want to see items in your collections matching that tag? or does the filter only apply to main grid
         for (var j in collections[i].artifacts) {
           var artifactItem = $('.post-' + collections[i].artifacts[j])[0];
+          var destinationGrid = false;
 
           // Determine destination grid by collection ID.
           for (var k in inst.mgrids) {
             if (collections[i].id === $(inst.mgrids[k].getElement()).data('collection-id')) {
-              var destinationGrid = inst.mgrids[k];
+              destinationGrid = inst.mgrids[k];
             }
           }
 
           // Move item.
-          originGrid.send(artifactItem, destinationGrid, -1, {
-            layoutSender: 'instant',
-            layoutReceiver: 'instant',
-          });
+          if ( artifactItem && destinationGrid ) {
+            originGrid.send(artifactItem, destinationGrid, -1, {
+              layoutSender: 'instant',
+              layoutReceiver: 'instant',
+            });
+          }
         }
       }
     });

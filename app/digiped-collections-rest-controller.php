@@ -34,7 +34,7 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 			)
 		);
 
-        // Read, edit, and delete existing collections by ID.
+		// Read, edit, and delete existing collections by ID.
 		register_rest_route(
 			$namespace, "/$base/(?P<collection_id>[\w]+)", array(
 				array(
@@ -82,16 +82,16 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Request
 	 */
 	public function create_item( $request ) {
-        $item = $this->prepare_item_for_database( $request );
+		$item = $this->prepare_item_for_database( $request );
 
-        $result = DigiPed_Collection::create( $item['name'] );
+		$result = DigiPed_Collection::create( $item['name'] );
 
-        if ( $result ) {
-            return new WP_REST_Response( $result, 201 );
-        }
+		if ( $result ) {
+			return new WP_REST_Response( $result, 201 );
+		}
 
-        return new WP_Error( 'cant-create', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
-    }
+		return new WP_Error( 'cant-create', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
+	}
 
 	/**
 	 * Get the current user's collections.
@@ -100,18 +100,15 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Response
 	 */
 	public function get_items( $request ) {
-        $url_params = $request->get_url_params();
+		$url_params = $request->get_url_params();
 
-        if ( isset( $url_params['collection_id'] ) ) {
-            $items = [ new DigiPed_Collection( $url_params['collection_id'] ) ];
-        } else {
-            $items = DigiPed_Collection::list();
-        }
+		if ( isset( $url_params['collection_id'] ) ) {
+			$items = [ new DigiPed_Collection( $url_params['collection_id'] ) ];
+		} else {
+			$items = DigiPed_Collection::list();
+		}
 
-        return $items;
-		return new WP_REST_Response( $data, 200 );
-
-		$data  = array();
+		$data = array();
 		foreach ( $items as $item ) {
 			$itemdata = $this->prepare_item_for_response( $item, $request );
 			$data[]   = $this->prepare_response_for_collection( $itemdata );
@@ -129,23 +126,23 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 	public function update_item( $request ) {
 		$url_params = $request->get_url_params();
 
-        $collection = new DigiPed_Collection( $url_params['collection_id'] );
+		$collection = new DigiPed_Collection( $url_params['collection_id'] );
 
-        if ( isset( $url_params['artifact_id'] ) ) {
-            if ( 'PUT' === $request->get_method() ) {
-                $result = $collection->add_artifact( $url_params['artifact_id'] );
-            }
-            if ( 'DELETE' === $request->get_method() ) {
-                $result = $collection->remove_artifact( $url_params['artifact_id'] );
-            }
-        } else {
-            // TODO handle updating name (etc?)
-            return new WP_Error( 'not-supported', __( 'message', 'text-domain' ), array( 'status' => 400 ) );
-        }
+		if ( isset( $url_params['artifact_id'] ) ) {
+			if ( 'PUT' === $request->get_method() ) {
+				$result = $collection->add_artifact( $url_params['artifact_id'] );
+			}
+			if ( 'DELETE' === $request->get_method() ) {
+				$result = $collection->remove_artifact( $url_params['artifact_id'] );
+			}
+		} else {
+			// TODO handle updating name (etc?)
+			return new WP_Error( 'not-supported', __( 'message', 'text-domain' ), array( 'status' => 400 ) );
+		}
 
-        if ( $result ) {
-            return new WP_REST_Response( null, 200 );
-        }
+		if ( $result ) {
+			return new WP_REST_Response( $result, 200 );
+		}
 
 		return new WP_Error( 'cant-update', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
 	}
@@ -157,15 +154,14 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 	 * @return WP_Error|WP_REST_Request
 	 */
 	public function delete_item( $request ) {
-		var_dump( func_get_args() );
-		die;
-		$item = $this->prepare_item_for_database( $request );
+		$url_params = $request->get_url_params();
 
-		if ( function_exists( 'slug_some_function_to_delete_item' ) ) {
-			$deleted = slug_some_function_to_delete_item( $item );
-			if ( $deleted ) {
-				return new WP_REST_Response( true, 200 );
-			}
+		$collection = new DigiPed_Collection( $url_params['collection_id'] );
+
+		$result = $collection->destroy();
+
+		if ( $result ) {
+			return new WP_REST_Response( $result, 200 );
 		}
 
 		return new WP_Error( 'cant-delete', __( 'message', 'text-domain' ), array( 'status' => 500 ) );
@@ -178,7 +174,6 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 	 * @return WP_Error|bool
 	 */
 	public function get_items_permissions_check( $request ) {
-		// return true; <--use to make readable by all
 		return current_user_can( 'read' );
 	}
 
@@ -229,7 +224,7 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 	 * @return WP_Error|object $prepared_item
 	 */
 	protected function prepare_item_for_database( $request ) {
-        return $request->get_body_params();
+		return $request->get_body_params();
 	}
 
 	/**
@@ -240,6 +235,10 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller {
 	 * @return mixed
 	 */
 	public function prepare_item_for_response( $item, $request ) {
-        return $item->artifacts;
+		return [
+			'id' => $item->id,
+			'name' => $item->name,
+			'artifacts' => $item->artifacts,
+		];
 	}
 }

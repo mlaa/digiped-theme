@@ -10,134 +10,164 @@
  */
 class DigiPed_Collection {
 
-    /**
-     * User meta key used to store collection data.
-     */
-    const USER_META_KEY = 'digiped-collections';
+	/**
+	 * User meta key used to store collection data.
+	 */
+	const USER_META_KEY = 'digiped-collections';
 
-    /**
-     * Meta value of self::USER_META_KEY.
-     * @var array
-     */
-    protected $user_meta;
+	/**
+	 * Alphanumeric unique ID.
+	 *
+	 * @var string
+	 */
+	protected $id;
 
-    /**
-     * Collection ID.
-     * @var int
-     */
-    public $id;
+	/**
+	 * Collection name.
+	 *
+	 * @var string
+	 */
+	protected $name;
 
-    /**
-     * Collection name.
-     * @var string
-     */
-    public $name;
+	/**
+	 * Array of artifact IDs.
+	 *
+	 * @var array
+	 */
+	protected $artifacts;
 
-    /**
-     * Array of artifacts in this collection..
-     * @var array
-     */
-    public $artifacts;
+	/**
+	 * Instantiate an existing collection by ID.
+	 *
+	 * @param string $id Collection ID.
+	 */
+	function __construct( string $id ) {
+		// TODO support lookup of any collection by ID regardless of current user
+		$user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
 
-    /**
-     * Instantiate an existing collection by ID.
-     *
-     * @param string $id ID of collection to instantiate.
-     * @return DigiPed_Collection
-     */
-    function __construct( string $id ) {
-        $this->user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
+		if ( isset( $user_meta[ $id ] ) ) {
+			$this->id = $id;
+			$this->name = $user_meta[ $id ]['name'];
+			$this->artifacts = $user_meta[ $id ]['artifacts'];
+		} else {
+			throw new Exception( "Collection '$id' does not exist!" );
+		}
+	}
 
-        if ( isset( $this->user_meta[ $id ] ) ) {
-            $this->id = $id;
-            $this->name = $this->user_meta[ $id ]['name'];
-            $this->artifacts = $this->user_meta[ $id ]['artifacts'];
-            return $this;
-        } else {
-            return false; // TODO Exception
-        }
-    }
+	/**
+	 * Get collection properties.
+	 *
+	 * @param string $key Property name.
+	 * @return mixed
+	 */
+	function __get( string $key ) {
+		return $this->$key;
+	}
 
-    /**
-     * Get all collections for the current user.
-     *
-     * @return array Array of DigiPed_Collection objects.
-     */
-    static function list() {
-        $user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
-        $collections = [];
+	/**
+	 * Save this collection to user meta.
+	 *
+	 * @param string $key   Property name.
+	 * @param mixed  $value Property value.
+	 * @return bool
+	 */
+	function save() {
+		$user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
 
-        foreach( $user_meta as $id => $attrs ) {
-            $collections[] = new self( $id );
-        }
+		if ( $user_meta ) {
+			$result = true;
 
-        return $collections;
-    }
+			$user_meta[ $this->id ] = [
+				'name' => $this->name,
+				'artifacts' => $this->artifacts,
+			];
 
-    /**
-     * Create a new collection for the current user.
-     *
-     * @param string $name Name of collection.
-     * @return DigiPed_Collection
-     */
-    static function create( string $name ) {
-        $user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
+			if ( get_user_meta( get_current_user_id(), self::USER_META_KEY, true ) !== $user_meta ) {
+				$result = update_user_meta( get_current_user_id(), self::USER_META_KEY, $user_meta );
+			}
 
-        $id = uniqid();
+			return $result;
+		} else {
+			throw new Exception( "Unable to save collection '$id'." );
+		}
+	}
 
-        if ( ! $user_meta ) {
-            $user_meta = [];
-        }
+	/**
+	 * Remove this collection from the database.
+	 *
+	 * @return bool
+	 */
+	function destroy() {
+		$user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
 
-        $user_meta[ $id ] = [
-            'name' => $name,
-            'artifacts' => [],
-        ];
+		if ( $user_meta ) {
+			unset( $user_meta[ $this->id ] );
+			return update_user_meta( get_current_user_id(), self::USER_META_KEY, $user_meta );
+		} else {
+			throw new Exception( "Unable to destroy collection '$id'." );
+		}
+	}
 
-        // TODO error handle?
-        $result = update_user_meta( get_current_user_id(), self::USER_META_KEY, $user_meta );
+	/**
+	 * Add an artifact to this collection.
+	 *
+	 * @param int $artifact_id Artifact ID.
+	 * @return bool
+	 */
+	function add_artifact( int $artifact_id ) {
+		$this->artifacts = array_unique( array_values( array_merge( $this->artifacts, [ $artifact_id ] ) ) );
+		return $this->save();
+	}
 
-        return new self( $id );
-    }
+	/**
+	 * Remove an artifact from this collection.
+	 *
+	 * @param int $artifact_id Artifact ID.
+	 * @return bool
+	 */
+	function remove_artifact( int $artifact_id ) {
+		$this->artifacts = array_unique( array_values( array_diff( $this->artifacts, [ $artifact_id ] ) ) );
+		return $this->save();
+	}
 
-    /**
-     * Save this collection to user meta.
-     *
-     * @return bool
-     */
-    function save() {
-        $this->user_meta[ $this->id ]['name'] = $this->name;
-        $this->user_meta[ $this->id ]['artifacts'] = array_unique( $this->artifacts );
-        return update_user_meta( get_current_user_id(), self::USER_META_KEY, $this->user_meta );
-    }
+	/**
+	 * Create a new collection for the current user.
+	 *
+	 * @param string $name Collection name.
+	 * @return DigiPed_Collection
+	 */
+	static function create( string $name ) {
+		$id = uniqid();
 
-    /**
-     * Add an artifact to this collection.
-     *
-     * @param int $artifact_id ID of the artifact to add.
-     * @return bool
-     */
-    function add_artifact( int $artifact_id ) {
-        // TODO array_unique
-        $this->artifacts[] = $artifact_id;
-        return $this->save();
-    }
+		$user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
 
-    /**
-     * Remove an artifact from this collection.
-     *
-     * @param int $artifact_id ID of the artifact to remove.
-     * @return bool
-     */
-    function remove_artifact( int $artifact_id ) {
-        $result = true;
-        $artifact_key = array_search( $artifact_id, $this->artifacts );
+		if ( ! $user_meta ) {
+			$user_meta = [];
+		}
 
-        if ( isset( $this->artifacts[ $artifact_key ] ) ) {
-            unset( $this->artifacts[ $artifact_key ] );
-            $result = $this->save();
-        }
+		$user_meta[ $id ] = [
+			'name'      => $name,
+			'artifacts' => [],
+		];
 
-        return $result;
-    }
+		update_user_meta( get_current_user_id(), self::USER_META_KEY, $user_meta );
+
+		return new self( $id );
+	}
+
+	/**
+	 * Get all collections for the current user.
+	 *
+	 * @return array List of DigiPed_Collection objects.
+	 */
+	static function list() {
+		$user_meta   = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
+		$collections = [];
+
+		foreach ( $user_meta as $id => $attrs ) {
+			$collections[] = new self( $id );
+		}
+
+		return $collections;
+	}
 }
