@@ -60,7 +60,16 @@ array_map(
 		if ( ! locate_template( $file, true, true ) ) {
 			$sage_error( sprintf( __( 'Error locating <code>%s</code> for inclusion.', 'sage' ), $file ), 'File not found' );
 		}
-	}, [ 'helpers', 'setup', 'filters', 'admin', 'digiped-collection', 'digiped-collections-rest-controller' ]
+	},
+	[
+		'helpers',
+		'setup',
+		'filters',
+		'admin',
+		'digiped-artifact',
+		'digiped-collection',
+		'digiped-collections-rest-controller'
+	]
 );
 
 /**

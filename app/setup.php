@@ -179,7 +179,17 @@ add_filter(
  */
 add_action(
 	'rest_api_init', function() {
-		$controller = new \DigiPed_Collections_REST_Controller();
+		$controller = new \DigiPed_Collections_REST_Controller;
 		$controller->register_routes();
+	}
+);
+
+/**
+ * Custom post types
+ */
+add_action(
+	'init', function() {
+		$da = new \DigiPed_Artifact;
+		$da->create_post_type();
 	}
 );
