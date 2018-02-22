@@ -42,15 +42,31 @@ class DigiPed_Collection {
 	 * @param string $id Collection ID.
 	 */
 	function __construct( string $id ) {
-		// TODO support lookup of any collection by ID regardless of current user
-		$user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
+		global $wpdb;
+
+		if ( is_user_logged_in() ) {
+			$user_meta = get_user_meta( get_current_user_id(), self::USER_META_KEY, true );
+		} else {
+			$result = $wpdb->get_var("
+				SELECT meta_value
+				FROM $wpdb->usermeta
+				WHERE meta_key = '" . self::USER_META_KEY . "'
+				AND meta_value LIKE '%$id%'
+			");
+
+			if ( $result ) {
+				$user_meta = unserialize( $result );
+			} else {
+				throw new Exception( "Collection '$id' not found." );
+			}
+		}
 
 		if ( isset( $user_meta[ $id ] ) ) {
 			$this->id = $id;
 			$this->name = $user_meta[ $id ]['name'];
 			$this->artifacts = $user_meta[ $id ]['artifacts'];
 		} else {
-			throw new Exception( "Collection '$id' does not exist!" );
+			throw new Exception( "Collection '$id' not found." );
 		}
 	}
 
