@@ -14,18 +14,14 @@ export default class DigiPed {
       headers: {'X-WP-Nonce': wpApiSettings.nonce},
     });
 
-    // jQuery collection of grid containers.
-    inst.$grids = $('main .grid, .my-digiped div > div');
-
     // Array of Muuri grid instances.
-    inst.mgrids = [];
+    inst.grids = [];
 
     // Initialize grids.
     inst.initGrid($('main .grid')[0]);
 
     // Initialize collections.
-    inst.initCollections()
-      .then(inst.redraw.bind(inst));
+    inst.initCollections();
 
     // Initialize controls/filters.
     inst.initCollectionControls();
@@ -49,62 +45,63 @@ export default class DigiPed {
           url: '/wp-json/digiped/v1/collections',
           data: {name: name},
         })
-          .done(inst.createCollection)
+          .done(inst.createCollection);
       }
 
       e.preventDefault();
     });
   }
 
-  // Create a new collection element & initialize its grid.
+  // Create a new collection element.
+  // Use initGrid() after creating.
   createCollection(data) {
     var container = $('<div class="ba mv2 pa1 collection">')
       .append($('<h3 class="ma0">' + data.name + '</h3>'))
       .append($('<div class="relative cf" data-collection-id="' + data.id + '"></div>'));
     var clone = container.clone().appendTo('.my-digiped .collections');
 
-    this.initGridEvents(this.initGrid(clone.find('.relative')[0]));
-
-    return clone;
+    return clone.find('.relative')[0];
   }
 
   // Load & initialize all collections.
+  // TODO this doesn't handle the case where cards in a collection may not be on the page due to filters, then they're just missing from the page entirely
+  // ...is that a feature? if you filter for a certain tag would you only want to see items in your collections matching that tag? or does the filter only apply to main grid
   initCollections() {
     var inst = this;
-    var moveItems = (collections) => {
-      var originGrid = inst.mgrids[0];
-      for (var i in collections) {
-        // Create this collection element.
-        inst.createCollection(collections[i]);
+    var moveItems = (collection) => {
+      for (var i in collection.artifacts) {
+        var artifactItem = $('.post-' + collection.artifacts[i])[0];
+        var destinationGrid;
 
-        // TODO this doesn't handle the case where cards in a collection may not be on the page due to filters, then they're just missing from the page entirely
-        // ...is that a feature? if you filter for a certain tag would you only want to see items in your collections matching that tag? or does the filter only apply to main grid
-        for (var j in collections[i].artifacts) {
-          var artifactItem = $('.post-' + collections[i].artifacts[j])[0];
-          var destinationGrid = false;
-
-          // Determine destination grid by collection ID.
-          for (var k in inst.mgrids) {
-            if (collections[i].id === $(inst.mgrids[k].getElement()).data('collection-id')) {
-              destinationGrid = inst.mgrids[k];
-            }
-          }
-
-          // Move item.
-          if ( artifactItem && destinationGrid ) {
-            originGrid.send(artifactItem, destinationGrid, -1, {
-              layoutSender: 'instant',
-              layoutReceiver: 'instant',
-            });
+        // Determine destination grid by collection ID.
+        for (var j in inst.grids) {
+          if (collection.id === $(inst.grids[j].getElement()).data('collection-id')) {
+            destinationGrid = inst.grids[j];
           }
         }
-      }
 
-      // Flipping this effectively enables the receive() handler for future events.
-      inst.loaded = true;
+        // Move item.
+        if ( artifactItem && destinationGrid ) {
+          inst.grids[0].send(artifactItem, destinationGrid, -1, {
+            layoutSender: 'instant',
+            layoutReceiver: 'instant',
+          });
+        }
+      }
     }
 
-    return $.ajax({url: '/wp-json/digiped/v1/collections'}).then(moveItems);
+    $.ajax({url: '/wp-json/digiped/v1/collections'})
+      .done((collections) => {
+        for (var i in collections) {
+          var elem = inst.createCollection(collections[i]);
+          var grid = inst.initGrid(elem);
+          moveItems(collections[i]);
+          inst.initGridEvents(grid);
+        }
+
+        inst.redraw();
+        inst.loaded = true; // Flipping this effectively enables the receive() handler for future events.
+      });
   }
 
   // Initialize filter menu to hide/show controls for each filter.
@@ -116,7 +113,11 @@ export default class DigiPed {
     var allTags = [];
 
     // Main grid only.
-    this.mgrids[0].getItems().map((item) => {
+    this.grids[0].getItems().map((item) => {
+      if ( ! $(item.getElement()).data('post-tags') ) {
+        return;
+      }
+
       $(item.getElement()).data('post-tags').map((tag) => {
         var tagHTML = '<li class="dib"><a class="link db ba br2 ma1 pa1 dim dark-gray" href="/tag/' + tag.slug + '">' + tag.name + '</a></li>'
 
@@ -137,11 +138,11 @@ export default class DigiPed {
 
     var m = new Muuri(elem, {
       dragEnabled: true,
-      dragSort: () => {return inst.mgrids},
+      dragSort: () => {return inst.grids},
       dragSortInterval: 10,
     });
 
-    this.mgrids.push(m);
+    inst.grids.push(m);
 
     // Return new grid for use in initGridEvents().
     return m;
@@ -164,7 +165,7 @@ export default class DigiPed {
 
   // Resize grids to fit cards.
   redraw() {
-    this.mgrids.map((grid) => {
+    this.grids.map((grid) => {
       grid.refreshItems();
       grid.layout(true);
     });
@@ -176,24 +177,25 @@ export default class DigiPed {
     var artifactID = $(data.item.getElement()).data('post-id');
     var fromCollectionID = $(data.fromGrid.getElement()).data('collection-id');
     var toCollectionID = $(data.toGrid.getElement()).data('collection-id');
-    var promise = new Promise((resolve) => {resolve()});
     var removeArtifact = () => {
+      var dfd = $.Deferred();
       if (fromCollectionID) {
-        promise = $.ajax({
+        $.ajax({
           method: "DELETE",
           url: '/wp-json/digiped/v1/collections/' + fromCollectionID + '/artifact/' + artifactID,
-        });
+        }).then(dfd.resolve);
+      } else {
+        dfd.resolve();
       }
-      return promise;
+      return dfd.promise();
     }
     var addArtifact = () => {
       if (toCollectionID) {
-        promise = $.ajax({
+        $.ajax({
           method: "PUT",
           url:  '/wp-json/digiped/v1/collections/' + toCollectionID + '/artifact/' + artifactID,
         });
       }
-      return promise;
     }
 
     if (fromCollectionID !== toCollectionID) {
