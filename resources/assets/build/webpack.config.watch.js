@@ -35,7 +35,8 @@ module.exports = {
     }),
     new WebpackShellPlugin({
          //onBuildStart: ['yarn build'],
-         onBuildEnd: ['yarn build && browser-sync -u https://localhost:3000 reload']
+         //onBuildEnd: [],
+         onBuildStart: ['yarn build && browser-sync -u https://localhost:3000 reload']
     }),
   ],
 };
