@@ -1,6 +1,7 @@
 const url = require('url');
 const webpack = require('webpack');
 const BrowserSyncPlugin = require('browsersync-webpack-plugin');
+const WebpackShellPlugin = require('./util/webpackShellPlugin');
 
 const config = require('./config');
 
@@ -16,8 +17,8 @@ if (url.parse(target).protocol === 'https:') {
 module.exports = {
   output: {
     pathinfo: true,
-    //publicPath: config.proxyUrl + config.publicPath,
-    publicPath: config.devUrl + config.publicPath,
+    publicPath: config.proxyUrl + config.publicPath,
+    //publicPath: config.devUrl + config.publicPath,
   },
   devtool: '#cheap-module-source-map',
   stats: false,
@@ -31,7 +32,10 @@ module.exports = {
       proxyUrl: config.proxyUrl,
       watch: config.watch,
       delay: 500,
-      https: true,
+    }),
+    new WebpackShellPlugin({
+         //onBuildStart: ['yarn build'],
+         onBuildEnd: ['yarn build && browser-sync -u https://localhost:3000 reload']
     }),
   ],
 };
