@@ -1,6 +1,6 @@
 <div class="my-digiped">
-  <a class="link" href="#" onclick="javascript:jQuery('article').addClass('open');return false;">grow all cards</a><br>
-  <a class="link" href="#" onclick="javascript:jQuery('article').removeClass('open');return false;">shrink all cards</a><br>
+  <a class="link" href="#" onclick="javascript:jQuery('article').addClass('big');return false;">grow all cards</a><br>
+  <a class="link" href="#" onclick="javascript:jQuery('article').removeClass('big');return false;">shrink all cards</a><br>
 
   <div class="collections"></div>
   <div class="mv2">

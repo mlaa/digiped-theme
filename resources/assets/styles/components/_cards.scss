@@ -1,8 +1,8 @@
-// collection grids
-.collection {
-  // give empty grids a min height so they are able to receive dragged cards
-  .relative {
-    min-height: 0.1rem;
+// filters
+.options {
+  .active {
+    @extend .bg-black;
+    @extend .white;
   }
 }
 
@@ -18,49 +18,56 @@ article {
 }
 
 // small card
-main article {
-  max-width: 200px; //todo avoid px? need to handle overflow
+main {
+  article {
+    max-width: 200px; //todo avoid px? need to handle overflow
 
-  .excerpt {
-    @extend .dn;
+    .fa-bars,
+    .excerpt {
+      @extend .dn;
+    }
+
+    &.big {
+      max-width: unset;
+
+      > div {
+        @extend .flex-row;
+      }
+
+      .excerpt {
+        @extend .db;
+      }
+    }
   }
 }
 
-// list items
-.my-digiped article {
-  @extend .db;
-  @extend .w-100;
-  @extend .ma0;
-  @extend .mt1;
+// collections
+.my-digiped {
+  // collection grids
+  .collection {
+    // give empty grids a min height so they are able to receive dragged cards
+    .relative {
+      min-height: 0.1rem;
+    }
 
-  .thumbnail,
-  .author,
-  .tags,
-  .excerpt {
-    @extend .dn;
-  }
+    // list items
+    article {
+      @extend .w-100;
+      @extend .ma0;
+      @extend .mt1;
 
-  .meta,
-  h2 {
-    @extend .pa0;
-    @extend .ma0;
-  }
-}
+      .thumbnail,
+      .author,
+      .tags,
+      .excerpt {
+        @extend .dn;
+      }
 
-main article.open {
-  max-width: unset;
-
-  > div {
-    @extend .flex-row;
-  }
-
-  img {
-    width: 330px; // TODO scaling, px
-    height: 370px;
-    max-width: unset;
-  }
-
-  .excerpt {
-    @extend .db;
+      .meta,
+      h2 {
+        @extend .pa0;
+        @extend .ma0;
+      }
+    }
   }
 }

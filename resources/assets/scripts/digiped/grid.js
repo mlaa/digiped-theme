@@ -21,12 +21,13 @@ export default class Grid {
     inst.Muuri.on('receive', inst.receive);
 
     window.dpGrids.push(this.Muuri); // TODO avoid global namespace
+
   }
 
   // Handler for Muuri 'receive' event.
   // TODO success/error handling/messaging
   receive(data) {
-    var artifactID = $(data.item.getElement()).data('post-id');
+    var artifactID = $(data.item.getElement()).data('id');
     var fromCollectionID = $(data.fromGrid.getElement()).data('collection-id');
     var toCollectionID = $(data.toGrid.getElement()).data('collection-id');
     var removeArtifact = () => {
