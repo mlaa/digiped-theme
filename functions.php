@@ -66,9 +66,10 @@ array_map(
 		'setup',
 		'filters',
 		'admin',
+		'digiped-keyword',
 		'digiped-artifact',
 		'digiped-collection',
-		'digiped-collections-rest-controller'
+		'digiped-collections-rest-controller',
 	]
 );
 

@@ -191,5 +191,8 @@ add_action(
 	'init', function() {
 		$da = new \DigiPed_Artifact;
 		$da->create_post_type();
+
+		$dk = new \DigiPed_Keyword;
+		$dk->create_post_type();
 	}
 );
