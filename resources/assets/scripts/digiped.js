@@ -13,21 +13,21 @@ export default class DigiPed {
     });
 
     // Initialize main grid.
-    new Grid($('main .grid')[0]);
+    inst.grids = [
+      new Grid($('main .grid')[0]).Muuri,
+    ];
 
     // Initialize filters.
-    this.initFilters();
+    inst.initFilters();
 
     // Initialize collections.
-    inst.initCollections();
-
-    // temporary debug helper
-    $( 'aside a' ).on('click', (e) => {
-      window.dpGrids.map((grid) => {
-        $(grid).trigger('dragReleaseEnd');
+    inst.initCollections()
+      .done(() => {
+        window.dpGrids.map((grid) => {
+          grid.refreshItems();
+          grid.layout(true);
+        });
       });
-      e.preventDefault();
-    });
   }
 
   // Add all tags to filter & bind events.
@@ -84,14 +84,9 @@ export default class DigiPed {
 
   // Load & initialize all collections.
   initCollections() {
-    $.ajax({url: '/wp-json/digiped/v1/collections'})
-      .done((collections) => {
-        for (var i in collections) {
-          new Collection(collections[i].id, collections[i].name, collections[i].artifacts);
-        }
-      });
+    var inst = this;
 
-    $('.create-collection').on('click', (e) => {
+    var createCollectionHandler = (e) => {
       var name = prompt('What should this collection be named?');
 
       if (name) {
@@ -106,6 +101,17 @@ export default class DigiPed {
       }
 
       e.preventDefault();
-    });
+    }
+
+    $('.create-collection').on('click', createCollectionHandler);
+
+    return $.ajax({url: '/wp-json/digiped/v1/collections'})
+      .done((data) => {
+        var collections = JSON.parse(data)
+        for (var i in collections) {
+          var c = new Collection(collections[i].id, collections[i].name, collections[i].artifacts);
+          inst.grids.push(c.Muuri);
+        }
+      });
   }
 }

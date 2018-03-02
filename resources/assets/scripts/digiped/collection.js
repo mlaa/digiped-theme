@@ -4,7 +4,7 @@ export default class Collection extends Grid {
   // Initialize a new collection.
   constructor(id = '', name = '', artifacts = []) {
     // Create the collection element.
-    var container = $('<div class="collection ba mv2 pa1">');
+    var container = $('<div class="collection pa3 bg-light-gray mb1">');
 
     container
       .appendTo('.my-digiped .collections')
@@ -29,7 +29,8 @@ export default class Collection extends Grid {
   initEvents() {
     var inst = this;
 
-    $(inst.Muuri.getElement()).parent().on('click', (e) => {
+    // Toggle artifact visibility by clicking collection name.
+    $(inst.Muuri.getElement()).parent().find('h3').on('click', (e) => {
       e.preventDefault();
       inst.toggle();
     });

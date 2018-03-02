@@ -14,14 +14,14 @@ export default class Grid {
     // Since cards have different dimensions in different grids, redraw after dragging.
     inst.Muuri.on('dragReleaseEnd', () => {
       inst.Muuri.refreshItems();
-      this.Muuri.layout(true);
+      inst.Muuri.layout(true);
     });
 
     // Update affected collection(s) on the backend.
     inst.Muuri.on('receive', inst.receive);
 
-    window.dpGrids.push(this.Muuri); // TODO avoid global namespace
-
+    // TODO avoid global namespace
+    window.dpGrids.push(inst.Muuri);
   }
 
   // Handler for Muuri 'receive' event.

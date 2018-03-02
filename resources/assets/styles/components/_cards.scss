@@ -8,6 +8,8 @@
 
 // global card styles
 article {
+  cursor: grab;
+
   // tags TODO use get_the_tags() and generate the <a> ourselves rather than this?
   .tags a {
     @extend .link;
@@ -20,13 +22,9 @@ article {
 // small card
 main {
   article {
-    max-width: 200px; //todo avoid px? need to handle overflow
+    max-width: 200px;
 
-    .fa-bars,
-    .excerpt {
-      @extend .dn;
-    }
-
+    // big card
     &.big {
       max-width: unset;
 
@@ -45,6 +43,11 @@ main {
 .my-digiped {
   // collection grids
   .collection {
+    h3 {
+      // this is the control to toggle artifact visibility in a collection
+      cursor: pointer;
+    }
+
     // give empty grids a min height so they are able to receive dragged cards
     .relative {
       min-height: 0.1rem;
@@ -53,14 +56,18 @@ main {
     // list items
     article {
       @extend .w-100;
-      @extend .ma0;
-      @extend .mt1;
+      @extend .mh0;
+      @extend .pa2;
 
       .thumbnail,
       .author,
       .tags,
       .excerpt {
         @extend .dn;
+      }
+
+      .fa-bars {
+        @extend .dib;
       }
 
       .meta,

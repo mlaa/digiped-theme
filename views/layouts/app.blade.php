@@ -6,7 +6,7 @@
     @include('partials.header')
     <div class="wrap container" role="document">
       <div class="content cf flex">
-        <main class="main w-70 order-2">
+        <main class="main order-2 ph1">
           <div class="controls f7">
             @include('partials.filter-controls')
           </div>
@@ -15,7 +15,7 @@
           </div>
         </main>
         @if (App\display_sidebar())
-          <aside class="sidebar w-30 order-1">
+          <aside class="sidebar order-1 mw5 br">
             @include('partials.sidebar')
           </aside>
         @endif

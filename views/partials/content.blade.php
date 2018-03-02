@@ -1,4 +1,3 @@
-{{-- TODO only include tag name, not other term data --}}
 <article
 	@php(post_class('absolute z-1 fl ba bg-white black ma2'))
 	data-id="@php(the_id())"
@@ -11,12 +10,12 @@
 				@if(has_post_thumbnail())
 					@php(the_post_thumbnail([200, 150], ['class' => 'db']))
 				@else
-					<img class="db" src="//via.placeholder.com/200x150">
+					<img class="db mw-100" src="//via.placeholder.com/200x150">
 				@endif
 		</div>
-		<div class="meta pv2 ph3">
+		<div class="meta pv2 ph3 mw-100">
 			<h2 class="ma0 mb2 f6">
-				<i class="fa fa-bars mh1"></i>
+				<i class="fa fa-bars dn mh1"></i>
 				<a href="@php(the_permalink())" class="link dim mid-gray">@php(the_title())</a>
 			</h2>
 			<div class="author f7 mb2">
@@ -29,7 +28,7 @@
 						@php(the_tags('<li class="dib">', '</li><li class="dib">', '</li>'))
 					</ul>
 			</div>
-			<div class="excerpt f7">
+			<div class="excerpt f7 dn">
 				@php(the_excerpt())
 			</div>
 			{{-- @include('partials/entry-meta') --}}
