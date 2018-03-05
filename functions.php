@@ -14,38 +14,38 @@ use Roots\Sage\Container;
  * @param string $subtitle
  * @param string $title
  */
-$sage_error = function ( $message, $subtitle = '', $title = '' ) {
-	$title   = $title ?: __( 'Sage &rsaquo; Error', 'sage' );
-	$footer  = '<a href="https://roots.io/sage/docs/">roots.io/sage/docs/</a>';
-	$message = "<h1>{$title}<br><small>{$subtitle}</small></h1><p>{$message}</p><p>{$footer}</p>";
-	wp_die( $message, $title );
+$sage_error = function ($message, $subtitle = '', $title = '') {
+    $title   = $title ?: __('Sage &rsaquo; Error', 'sage');
+    $footer  = '<a href="https://roots.io/sage/docs/">roots.io/sage/docs/</a>';
+    $message = "<h1>{$title}<br><small>{$subtitle}</small></h1><p>{$message}</p><p>{$footer}</p>";
+    wp_die($message, $title);
 };
 
 /**
  * Ensure compatible version of PHP is used
  */
-if ( version_compare( '7', phpversion(), '>=' ) ) {
-	$sage_error( __( 'You must be using PHP 7 or greater.', 'sage' ), __( 'Invalid PHP version', 'sage' ) );
+if (version_compare('7', phpversion(), '>=')) {
+    $sage_error(__('You must be using PHP 7 or greater.', 'sage'), __('Invalid PHP version', 'sage'));
 }
 
 /**
  * Ensure compatible version of WordPress is used
  */
-if ( version_compare( '4.7.0', get_bloginfo( 'version' ), '>=' ) ) {
-	$sage_error( __( 'You must be using WordPress 4.7.0 or greater.', 'sage' ), __( 'Invalid WordPress version', 'sage' ) );
+if (version_compare('4.7.0', get_bloginfo('version'), '>=')) {
+    $sage_error(__('You must be using WordPress 4.7.0 or greater.', 'sage'), __('Invalid WordPress version', 'sage'));
 }
 
 /**
  * Ensure dependencies are loaded
  */
-if ( ! class_exists( 'Roots\\Sage\\Container' ) ) {
-	if ( ! file_exists( $composer = __DIR__ . '/vendor/autoload.php' ) ) {
-		$sage_error(
-			__( 'You must run <code>composer install</code> from the Sage directory.', 'sage' ),
-			__( 'Autoloader not found.', 'sage' )
-		);
-	}
-	require_once $composer;
+if (! class_exists('Roots\\Sage\\Container')) {
+    if (! file_exists($composer = __DIR__ . '/vendor/autoload.php')) {
+        $sage_error(
+            __('You must run <code>composer install</code> from the Sage directory.', 'sage'),
+            __('Autoloader not found.', 'sage')
+        );
+    }
+    require_once $composer;
 }
 
 /**
@@ -55,22 +55,22 @@ if ( ! class_exists( 'Roots\\Sage\\Container' ) ) {
  * Add or remove files to the array as needed. Supports child theme overrides.
  */
 array_map(
-	function ( $file ) use ( $sage_error ) {
-		$file = "./app/{$file}.php";
-		if ( ! locate_template( $file, true, true ) ) {
-			$sage_error( sprintf( __( 'Error locating <code>%s</code> for inclusion.', 'sage' ), $file ), 'File not found' );
-		}
-	},
-	[
-		'helpers',
-		'setup',
-		'filters',
-		'admin',
-		'digiped-keyword',
-		'digiped-artifact',
-		'digiped-collection',
-		'digiped-collections-rest-controller',
-	]
+    function ($file) use ($sage_error) {
+        $file = "./app/{$file}.php";
+        if (! locate_template($file, true, true)) {
+            $sage_error(sprintf(__('Error locating <code>%s</code> for inclusion.', 'sage'), $file), 'File not found');
+        }
+    },
+    [
+        'helpers',
+        'setup',
+        'filters',
+        'admin',
+        'digiped-keyword',
+        'digiped-artifact',
+        'digiped-collection',
+        'digiped-collections-rest-controller',
+    ]
 );
 
 /**
@@ -91,14 +91,16 @@ array_map(
  * └── TEMPLATEPATH           -> /srv/www/example.com/current/web/app/themes/sage/resources
  */
 Container::getInstance()
-	->bindIf(
-		'config', function () {
-			return new Config(
-				[
-					'assets' => require __DIR__ . '/config/assets.php',
-					'theme'  => require __DIR__ . '/config/theme.php',
-					'view'   => require __DIR__ . '/config/view.php',
-				]
-			);
-		}, true
-	);
+    ->bindIf(
+        'config',
+        function () {
+            return new Config(
+                [
+                    'assets' => require __DIR__ . '/config/assets.php',
+                    'theme'  => require __DIR__ . '/config/theme.php',
+                    'view'   => require __DIR__ . '/config/view.php',
+                ]
+            );
+        },
+        true
+    );
