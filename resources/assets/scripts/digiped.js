@@ -114,7 +114,7 @@ export default class DigiPed {
 
     return $.ajax({url: '/wp-json/digiped/v1/collections'})
       .done((data) => {
-        var collections = JSON.parse(data)
+        var collections = data;
         for (var i in collections) {
           var c = new Collection(collections[i].id, collections[i].name, collections[i].artifacts);
           inst.grids.push(c.Muuri);
