@@ -32,7 +32,14 @@ export default class DigiPed {
 
   // Add all tags to filter & bind events.
   initFilters() {
-    ['tag', 'type', 'keyword'].forEach((taxonomy) => {
+    var taxonomies = [
+      'tag',
+      'type',
+      'keyword',
+      'author',
+    ];
+
+    taxonomies.forEach((taxonomy) => {
       var allTerms = [];
 
       // Parse terms from artifacts in the main grid.

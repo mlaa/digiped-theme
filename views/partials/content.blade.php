@@ -4,6 +4,7 @@
 	data-tag="{{json_encode(array_map(function($term){return $term->name;}, get_the_tags()))}}"
 	data-type="{{json_encode(get_post_meta(get_the_id(), 'artifact type'))}}"
 	data-keyword="{{json_encode(get_post_meta(get_the_id(), 'keyword'))}}"
+	data-author="{{json_encode([get_the_author()])}}"
 >
 	<div class="flex flex-column">
 		<div class="thumbnail">
