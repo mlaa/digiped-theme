@@ -1,0 +1,15 @@
+footer {
+  background-color: $footer-bg;
+  color: $footer-fg;
+
+  ul {
+    list-style-type: none;
+  }
+
+  a {
+    color: $footer-fg;
+    line-height: 1.5em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+}
