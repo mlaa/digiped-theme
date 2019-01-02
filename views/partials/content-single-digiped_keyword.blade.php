@@ -16,7 +16,7 @@
     </header>
     <div class="grid relative">
       <div class="entry-content"> 
-        <?php $the_artifacts = new WP_Query( 'post_type=digiped_artifact', 'tag='.get_the_title() ); ?>
+       
         @foreach($the_artifacts as $artifact)
         @include('partials.content-digiped-keyword-panel', $artifact)
         @endforeach
