@@ -1,0 +1,42 @@
+.digiped_keyword {
+  max-width: 100%;
+  margin: 0 15% 5% 15%;
+
+  header {
+    color: black;
+    background-color: transparent;
+    padding: 0;
+
+    .curator-name {
+      color: #465a63;
+      margin-top: 0.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .title {
+      color: #465a63;
+      margin-top: 0.25rem;
+      margin-bottom: 0;
+      text-transform: capitalize;
+    }
+
+    .sub-title {
+      color: #c7c69a;
+      font-size: 0.8rem;
+      margin-bottom: 0;
+      text-transform: uppercase;
+
+      .keyword {
+        margin-top: 3rem;
+      }
+
+      .curator {
+        margin-top: 1.5rem;
+      }
+    }
+  }
+
+  .entry-content {
+    margin-top: 0;
+  }
+}

@@ -41,7 +41,14 @@ let webpackConfig = {
         enforce: 'pre',
         test: /\.js$/,
         include: config.paths.assets,
-        use: 'eslint',
+        use: [
+          {
+              loader: 'eslint-loader',
+              options: {
+                  emitWarning: false
+              }
+          }
+      ],
       },
       {
         enforce: 'pre',
@@ -94,20 +101,20 @@ let webpackConfig = {
         }),
       },
       {
-        test: /\.(ttf|eot|woff2?|png|jpe?g|gif|svg|ico)$/,
+        test: /\.(ttf|oft|eot|woff2?|png|jpe?g|gif|svg|ico)$/,
         include: config.paths.assets,
-        loader: 'url',
+        loader: 'file-loader',
         options: {
-          limit: 4096,
+          limit: 1000000,
           name: `[path]${assetsFilenames}.[ext]`,
         },
       },
       {
-        test: /\.(ttf|eot|woff2?|png|jpe?g|gif|svg|ico)$/,
+        test: /\.(ttf|oft|eot|woff2?|png|jpe?g|gif|svg|ico)$/,
         include: /node_modules/,
-        loader: 'url',
+        loader: 'file-loader',
         options: {
-          limit: 4096,
+          limit: 1000000,
           outputPath: 'vendor/',
           name: `${config.cacheBusting}.[ext]`,
         },

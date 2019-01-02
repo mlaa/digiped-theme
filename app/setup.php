@@ -210,3 +210,11 @@ add_action(
         $dk->create_post_type();
     }
 );
+
+add_action(
+    'template_redirect',
+    function () {
+        $da = new \DigiPed_Artifact;
+        $da->redirect_artifact();
+    }
+);

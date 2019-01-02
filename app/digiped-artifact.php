@@ -15,6 +15,8 @@ class DigiPed_Artifact
                 'singular_name' => 'Artifact',
             ),
             'description'  => '',
+            'rewrite'           => array( 'slug' => 'artifact' ),
+            'publicly_queryable'  => false,
             'public'       => true,
             'show_ui'      => true,
             'hierarchical' => true,
@@ -33,5 +35,13 @@ class DigiPed_Artifact
             ],
         );
         register_post_type('digiped_artifact', $args);
+    }
+
+    public function redirect_artifact () {
+        $queried_post_type = get_query_var('post_type');
+        if (  is_single() && 'digiped_artifact' ==  $queried_post_type  ) {
+            wp_redirect( home_url(), 301 );
+            exit;
+        }
     }
 }

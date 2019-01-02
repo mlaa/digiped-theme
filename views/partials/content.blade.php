@@ -6,6 +6,7 @@
 	data-keyword="{{json_encode(get_post_meta(get_the_id(), 'keyword'))}}"
 	data-author="{{json_encode([get_the_author()])}}"
 >
+
 	<div class="flex flex-column">
 		<div class="thumbnail">
 				@if(has_post_thumbnail())
@@ -17,7 +18,8 @@
 		<div class="meta pv2 ph3 mw-100">
 			<h2 class="ma0 mb2 f6">
 				<i class="fa fa-bars dn mh1"></i>
-				<a href="@php(the_permalink())" class="link dim mid-gray">@php(the_title())</a>
+				
+				<a href="<?php echo site_url('keyword/'.get_post(get_post()->post_parent)->post_name); ?>" class="link dim mid-gray">@php( the_title())</a>
 			</h2>
 			<div class="author f7 mb2">
 				<i class="fa fa-user"></i>

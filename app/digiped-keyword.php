@@ -14,6 +14,7 @@ class DigiPed_Keyword
                 'name'          => 'Keywords',
                 'singular_name' => 'Keyword',
             ],
+            'rewrite'           => array( 'slug' => 'keyword' ),
             'description'  => '',
             'public'       => true,
             'show_ui'      => true,
