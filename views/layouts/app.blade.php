@@ -20,7 +20,6 @@
            ?>
            <?php $the_artifacts = new WP_Query( 'post_type=digiped_artifact', 'tag='.get_the_title() ); ?>
            @yield('content', $the_artifacts);
-         <?php } ?>
 
         </main>
         @if (App\display_sidebar())
