@@ -8,6 +8,7 @@
 /**
  * Encapsulates data management to support collections.
  */
+
 class DigiPed_Collection
 {
 

@@ -6,6 +6,24 @@
   }
 }
 
+.muuri-item {
+  margin: 0.5rem 1.5rem;
+}
+
+.digiped_keyword.muuri-item-dragging {
+  z-index: 99999;
+  -webkit-box-shadow: 0 0 0.25rem 0.25rem #c7c69a; /* WebKit */
+  -moz-box-shadow: 0 0 0.25rem 0.25rem #c7c69a; /* Firefox */
+  box-shadow: 0 0 0.5rem 0.25rem #c7c69a; /* Standard */
+}
+
+.digiped_artifact.muuri-item-dragging {
+  z-index: 99999;
+  -webkit-box-shadow: 0 0 0.25rem 0.25rem #7eafbc; /* WebKit */
+  -moz-box-shadow: 0 0 0.25rem 0.25rem #7eafbc; /* Firefox */
+  box-shadow: 0 0 0.5rem 0.25rem #7eafbc; /* Standard */
+}
+
 // global card styles
 article {
   cursor: grab;
@@ -21,8 +39,66 @@ article {
 
 // small card
 main {
+  article.digiped_keyword {
+    background-color: #f5f5f5;
+    color: white;
+  }
+
   article {
-    max-width: 200px;
+    margin-bottom: 5rem;
+
+    .link-wrapper {
+      height: 2.5rem;
+      width: 15rem;
+
+      .keyword-label {
+        background-color: #c7c69a;
+      }
+
+      .title {
+        font-size: 1rem;
+      }
+    }
+
+    .kw-card {
+      width: 15rem;
+
+      .kw-card-inner-wrapper {
+        height: 25rem;
+        color: #000;
+      }
+
+      .read-more-card {
+        margin-left: 5%;
+        position: absolute;
+        bottom: 1rem;
+      }
+
+      .meta {
+        height: 55%;
+
+        .card-meta {
+          font-size: 0.6rem;
+          overflow: hidden;
+        }
+
+        .card-excerpt {
+          p {
+            font-size: 0.6rem;
+            overflow: hidden;
+            height: 100%;
+            line-height: 0.8rem;
+            padding: 0;
+            margin: 0;
+            text-transform: capitalize;
+          }
+        }
+      }
+    }
+
+    .kw-card.panel {
+      float: right;
+    }
 
     // big card
     &.big {
@@ -37,15 +113,75 @@ main {
       }
     }
   }
+
+  article.panel {
+    width: 100%;
+    margin: 5rem 0;
+
+    .link-wrapper {
+      width: 100%;
+
+      .title {
+        font-weight: bold;
+      }
+    }
+
+    .card-content.hidden {
+      display: block;
+      font-size: 1rem;
+      width: 70%;
+      padding-top: 1.5rem;
+      padding-right: 1rem;
+      height: 25rem;
+      overflow: scroll;
+    }
+
+    .kw-card {
+      float: right;
+      width: 30%;
+
+      .f60,
+      .f7 {
+        font-size: 0.9rem;
+      }
+
+      .kw-card-inner-wrapper.ba {
+        border: none;
+      }
+
+      .card-meta {
+        height: 100%;
+        padding-top: 10px;
+
+        .w-50 {
+          width: 100%;
+        }
+      }
+
+      .card-excerpt,
+      .read-more-card {
+        display: none;
+      }
+    }
+  }
 }
 
 // collections
 .my-digiped {
+
   // collection grids
   .collection {
+    background-color: $collection-green;
+
     h3 {
       // this is the control to toggle artifact visibility in a collection
       cursor: pointer;
+      font-size: 1rem;
+      text-transform: capitalize;
+    }
+
+    .grid {
+      background-color: #f5f5f5;
     }
 
     // give empty grids a min height so they are able to receive dragged cards
@@ -55,6 +191,31 @@ main {
 
     // list items
     article {
+      background-color: #f5f5f5;
+      cursor: default;
+
+      .link-wrapper {
+        .title {
+          font-size: 1rem;
+          width: 90%;
+          float: left;
+        }
+
+        .remove-artifact-wrapper {
+          display: block;
+          width: 10%;
+          float: left;
+        }
+      }
+
+      .kw-card {
+        background-color: #f5f5f5;
+
+        .kw-card-inner-wrapper {
+          display: none;
+        }
+      }
+
       @extend .w-100;
       @extend .mh0;
       @extend .pa2;
@@ -64,6 +225,10 @@ main {
       .tags,
       .excerpt {
         @extend .dn;
+      }
+
+      .thumbnail {
+        height: 35%;
       }
 
       .fa-bars {

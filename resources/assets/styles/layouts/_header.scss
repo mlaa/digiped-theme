@@ -1,13 +1,13 @@
 // TODO: .banner .nav li {}
 // TODO: .banner .nav a {}
+.banner {
+  padding: 1.5rem;
+  font-size: 1rem;
+}
 
 header {
   background-color: $header-bg;
   color: $header-fg;
-
-  .banner {
-    padding: 1.5rem;
-  }
 
   ul {
     list-style-type: none;

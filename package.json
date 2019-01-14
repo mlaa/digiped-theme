@@ -105,6 +105,7 @@
   "dependencies": {
     "font-awesome": "~4.7",
     "gulp-sass": "^4.0.1",
+    "in-view": "^0.6.1",
     "jquery": "^3.3.1",
     "muuri": "^0.5.3",
     "npm": "^6.4.0",

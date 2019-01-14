@@ -1,3 +1,32 @@
 body {
   font-family: 'Montserrat', sans-serif !important;
+  font-size: 62.5%;
 }
+
+.truncatedText {
+  line-height: 1.1rem;
+  height: 2.3rem;
+  overflow: hidden;
+}
+
+.hidden {
+  display: none;
+}
+
+.f60 {
+  font-size: 0.55rem;
+}
+
+.h-33 {
+  height: 33%;
+  overflow: hidden;
+}
+
+.collection-green {
+  background-color: $collection-green;
+}
+
+.sticky { position: sticky; }
+.top-75 { top: 75vh; }
+.top-95 { top: 95vh; }
+.bottom-95 { top: 95%; }

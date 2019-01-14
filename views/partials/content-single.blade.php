@@ -3,7 +3,6 @@
     <h1 class="entry-title">{{ get_the_title() }}</h1>
     @include('partials/entry-meta')
   </header>
-  conten single
   <div class="entry-content">
     @php(the_content())
   </div>

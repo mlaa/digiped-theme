@@ -104,3 +104,43 @@ Container::getInstance()
         },
         true
     );
+
+    function cropWords($content, $count, $echo = true) {
+        $words = explode(" ", $content);
+        $somewords = array_slice($words, 0, $count);
+        $smallphrase = strip_tags(rtrim(preg_replace('/[A-Z]+(\.|\,|\.\,),/', '',implode(" ", $somewords)), ', and or . 1'));
+        if(!$echo) {
+            return $smallphrase;	
+        }
+        echo $smallphrase;
+        return true;
+    }
+
+    function change_search_url() {
+        if ( is_search() && ! empty( $_GET['s'] ) ) {
+            wp_redirect( home_url( "/search/" ) . urlencode( get_query_var( 's' ) ) );
+            exit();
+        }   
+    }
+    add_action( 'template_redirect', 'change_search_url' );
+
+    function queryfilter($query) {
+        // for keyword archive page
+        if ( is_post_type_archive( 'digiped_keyword' ) ) {
+            // Display 50 posts for a custom post type called 'movie'
+            $query->set( 'posts_per_page', -1 );
+            return;
+        }
+
+        //for search
+        if ($query->is_search && !is_admin() ) {
+            $query->set('post_type',array('digiped_artifact','digiped_keyword'));
+            $query->set('orderby', array('post_title' => 'ASC'));
+            $query->set( 'posts_per_page', '100' );
+            return $query;
+        }
+     
+        return $query;
+    }
+     
+    add_filter('pre_get_posts','queryfilter');

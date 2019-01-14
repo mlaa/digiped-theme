@@ -19,6 +19,7 @@ class DigiPed_Keyword
             'public'       => true,
             'show_ui'      => true,
             'hierarchical' => true,
+            'has_archive' => true,
             'supports'     => [
                 'title',
                 'editor',

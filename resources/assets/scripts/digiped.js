@@ -9,7 +9,9 @@ export default class DigiPed {
 
     // Add WP Nonce header to all ajax requests.
     $.ajaxSetup({
-      headers: {'X-WP-Nonce': wpApiSettings.nonce},
+      headers: {
+        'X-WP-Nonce': wpApiSettings.nonce,
+      },
     });
 
     // Initialize main grid.
@@ -32,11 +34,16 @@ export default class DigiPed {
 
   // Add all tags to filter & bind events.
   initFilters() {
-    var taxonomies = [
+    // We dont' want this running on ny page without the controls in place.
+    if (document.getElementsByClassName('controls').length === 0) {
+      return false;
+    }
+
+    const taxonomies = [
       'tag',
       'type',
-      'keyword',
       'author',
+      'curator',
     ];
 
     taxonomies.forEach((taxonomy) => {
@@ -80,6 +87,8 @@ export default class DigiPed {
           $(e.target).parents('.options').find('a').removeClass('active');
           $(e.target).addClass('active');
           window.dpGrids[0].filter((item) => {
+            console.log($(item.getElement()).data(taxonomy));
+            console.log(e.target);
             return $(item.getElement()).data(taxonomy).includes($(e.target).html());
           });
         }
@@ -98,10 +107,12 @@ export default class DigiPed {
 
       if (name) {
         $.ajax({
-          method: "POST",
-          url: '/wp-json/digiped/v1/collections',
-          data: {name: name},
-        })
+            method: "POST",
+            url: '/wp-json/digiped/v1/collections',
+            data: {
+              name: name,
+            },
+          })
           .done((data) => {
             new Collection(data.id, data.name);
           });
@@ -112,7 +123,9 @@ export default class DigiPed {
 
     $('.create-collection').on('click', createCollectionHandler);
 
-    return $.ajax({url: '/wp-json/digiped/v1/collections'})
+    return $.ajax({
+        url: '/wp-json/digiped/v1/collections',
+      })
       .done((data) => {
         var collections = data;
         for (var i in collections) {
