@@ -168,8 +168,6 @@ function createCustomPostType($post_type_name, $args)
 
 function createCustomTaxonomy($tax_name, $post_types = array("post"), $is_hierarchical = true, $labels = false, $show_ui = true)
 {
-    
-    //is_hierarchy seems to be broken. Need to figure out what's wrong.
 
     if (!$labels) {
         $labels = array(
