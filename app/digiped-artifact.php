@@ -11,7 +11,7 @@ class DigiPed_Artifact
     {
         $args = array(
             'labels'       => array(
-                'name'          => 'Artifacts',
+                'name'          => 'Artifacts (old)',
                 'singular_name' => 'Artifact',
             ),
             'description'  => '',

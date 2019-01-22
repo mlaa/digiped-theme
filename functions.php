@@ -70,6 +70,8 @@ array_map(
         'digiped-artifact',
         'digiped-collection',
         'digiped-collections-rest-controller',
+        'custom-post-type',
+        'custom-taxonomy'
     ]
 );
 
@@ -134,7 +136,7 @@ Container::getInstance()
 
         //for search
         if ($query->is_search && !is_admin() ) {
-            $query->set('post_type',array('digiped_artifact','digiped_keyword'));
+            $query->set('post_type',array('digiped_artifact','digiped_keyword', 'artifact', 'collection'));
             $query->set('orderby', array('post_title' => 'ASC'));
             $query->set( 'posts_per_page', '100' );
             return $query;
@@ -144,3 +146,57 @@ Container::getInstance()
     }
      
     add_filter('pre_get_posts','queryfilter');
+
+
+function createPostType($post_type_name, $args)
+{
+
+    if (empty($args['labels'])) {
+        $args['labels'] = array(
+            'name' => _x($post_type_name, "", 'learningspace'),
+            'singular_name' => _x($post_type_name, "", 'learningspace'),
+        );
+    }
+
+    //required for gutenberg
+    //$args['show_in_rest'] = true;
+
+
+    // Registering your Custom Post Type
+    register_post_type($post_type_name, $args);
+}
+
+function createTaxonomy($tax_name, $post_types = array("post"), $is_hierarchical = true, $labels = false, $show_ui = true)
+{
+    if (!$labels) {
+        $labels = array(
+            'name' => _x($tax_name, $tax_name),
+            'singular_name' => _x($tax_name, $tax_name),
+            'search_items' => __('Search ' . $tax_name),
+            'all_items' => __('All ' . $tax_name),
+            'parent_item' => null,
+            'parent_item_colon' => null,
+            'edit_item' => __('Edit ' . $tax_name),
+            'update_item' => __('Update ' . $tax_name),
+            'add_new_item' => __('Add New ' . $tax_name),
+            'new_item_name' => __('New ' . $tax_name . ' Name'),
+            'menu_name' => __($tax_name),
+        );
+    }
+    if ($is_hierarchical && empty($labels['parent_item'])) {
+        $labels['parent_item'] = __('Parent Topic');
+        $labels['parent_item_colon'] = __('Parent Topic:');
+    }
+    register_taxonomy(strtolower(str_replace(" ", "_", $tax_name)), $post_types, array(
+        'hierarchical' => $is_hierarchical,
+        'labels' => $labels,
+        'show_ui' => $show_ui,
+        'show_in_menu' => false,
+        'show_in_nav_menu' => false,
+        'show_in_admin_bar' => true,
+        'show_admin_column' => true,
+        'query_var' => true,
+        'show_in_rest' => true,
+        'rewrite' => array('slug' => $tax_name),
+    ));
+}

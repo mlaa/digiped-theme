@@ -167,54 +167,42 @@ add_action(
 );
 
 /**
- * Soberwp Models
- */
-add_filter(
-    'sober/models/path',
-    function () {
-        return get_theme_file_path() . '/app/models';
-    }
-);
+* Soberwp Models
+*/
+add_filter('sober/models/path', function () {
+    return get_theme_file_path() . '/app/models';
+});
 
 /**
- * Soberwp Controller
- */
-add_filter(
-    'sober/controller/path',
-    function () {
-        return get_theme_file_path() . '/app/controllers';
-    }
-);
+* Soberwp Controller
+*/
+add_filter('sober/controller/path', function () {
+    return get_theme_file_path() . '/app/controllers';
+});
 
 /**
- * Collection REST Controller
- */
-add_action(
-    'rest_api_init',
-    function () {
-        $controller = new \DigiPed_Collections_REST_Controller;
-        $controller->register_routes();
-    }
-);
+* Collection REST Controller
+*/
+add_action('rest_api_init', function () {
+    $controller = new \DigiPed_Collections_REST_Controller;
+    $controller->register_routes();
+});
 
 /**
- * Custom post types
- */
-add_action(
-    'init',
-    function () {
-        $da = new \DigiPed_Artifact;
-        $da->create_post_type();
+* Custom post types
+*/
+add_action('init', function () {
+    $da = new \DigiPed_Artifact;
+    $da->create_post_type();
 
-        $dk = new \DigiPed_Keyword;
-        $dk->create_post_type();
-    }
-);
+    $dk = new \DigiPed_Keyword;
+    $dk->create_post_type();
 
-add_action(
-    'template_redirect',
-    function () {
-        $da = new \DigiPed_Artifact;
-        $da->redirect_artifact();
-    }
-);
+    (new \CustomPostType)->init();
+    (new \CustomTaxonomy)->init();
+});
+
+add_action('template_redirect', function () {
+    $da = new \DigiPed_Artifact;
+    $da->redirect_artifact();
+});
