@@ -148,7 +148,7 @@ Container::getInstance()
     add_filter('pre_get_posts','queryfilter');
 
 
-function createPostType($post_type_name, $args)
+function createCustomPostType($post_type_name, $args)
 {
 
     if (empty($args['labels'])) {
@@ -166,27 +166,26 @@ function createPostType($post_type_name, $args)
     register_post_type($post_type_name, $args);
 }
 
-function createTaxonomy($tax_name, $post_types = array("post"), $is_hierarchical = true, $labels = false, $show_ui = true)
+function createCustomTaxonomy($tax_name, $post_types = array("post"), $is_hierarchical = true, $labels = false, $show_ui = true)
 {
+    
+    //is_hierarchy seems to be broken. Need to figure out what's wrong.
+
     if (!$labels) {
         $labels = array(
-            'name' => _x($tax_name, $tax_name),
-            'singular_name' => _x($tax_name, $tax_name),
-            'search_items' => __('Search ' . $tax_name),
-            'all_items' => __('All ' . $tax_name),
-            'parent_item' => null,
-            'parent_item_colon' => null,
-            'edit_item' => __('Edit ' . $tax_name),
-            'update_item' => __('Update ' . $tax_name),
-            'add_new_item' => __('Add New ' . $tax_name),
+            'name' => __($tax_name, 'tax_'.$tax_name),
+            'singular_name' => __($tax_name, 'tax_'.$tax_name),
+            'search_items' => __('Search ' . 'tax_'.$tax_name),
+            'all_items' => __('All ' . 'tax_'.$tax_name),
+            'edit_item' => __('Edit ' . 'tax_'.$tax_name),
+            'update_item' => __('Update ' . 'tax_'.$tax_name),
+            'add_new_item' => __('Add New ' . 'tax_'.$tax_name),
             'new_item_name' => __('New ' . $tax_name . ' Name'),
-            'menu_name' => __($tax_name),
+            'parent_item' => __('Parent Topic'),
+            'parent_item_colon' =>  __('Parent Topic:')
         );
     }
-    if ($is_hierarchical && empty($labels['parent_item'])) {
-        $labels['parent_item'] = __('Parent Topic');
-        $labels['parent_item_colon'] = __('Parent Topic:');
-    }
+    
     register_taxonomy(strtolower(str_replace(" ", "_", $tax_name)), $post_types, array(
         'hierarchical' => $is_hierarchical,
         'labels' => $labels,

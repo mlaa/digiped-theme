@@ -19,7 +19,7 @@ class CustomPostType
             'args' => array(
                 'label' => __('Artifacts', 'digiped'),
                 'labels' => array(
-                    'name' => _x('Artifacts', 'Post Type General Name', 'digiped'),
+                    'name' => __('Artifacts', 'Post Type General Name', 'digiped'),
                     'singular_name' => _x('Artifact', 'Post Type Singular Name', 'digiped'),
                     'menu_name' => __('Artifacts', 'digiped'),
                     'parent_item_colon' => __('Parent Artifact:', 'digiped'),
@@ -50,13 +50,13 @@ class CustomPostType
                 'publicly_queryable' => true,
                 'capability_type' => 'page',)
         );
-        createPostType('Artifact', $artifacts['args']);
+        createCustomPostType('Artifact', $artifacts['args']);
 
         $collection = array(
             'args' => array(
                 'label' => __('Collections', 'digiped'),
                 'labels' => array(
-                    'name' => _x('Collections', 'Post Type General Name', 'digiped'),
+                    'name' => __('Collections', 'Post Type General Name', 'digiped'),
                     'singular_name' => _x('Collection', 'Post Type Singular Name', 'digiped'),
                     'menu_name' => __('Collections', 'digiped'),
                     'parent_item_colon' => __('Parent Collection:', 'digiped'),
@@ -87,7 +87,7 @@ class CustomPostType
                 'publicly_queryable' => true,
                 'capability_type' => 'page',)
         );
-        createPostType('Collection', $collection['args']);
+        createCustomPostType('Collection', $collection['args']);
     }
 
     public function defaultValues()

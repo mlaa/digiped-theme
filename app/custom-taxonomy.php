@@ -16,14 +16,14 @@ class CustomTaxonomy
     
     public function doTaxonomies()
     {
-        createTaxonomy('Keyword', array("artifact"), true, true);
-        // createTaxonomy( 'File Type', array("artifact"), true, true);
-        createTaxonomy('Genre', array("artifact"), true, true);
-        createTaxonomy('Author', array("artifact"), true, false);
-        createTaxonomy('Citation', array("artifact"), true, true);
-        createTaxonomy('Related Work', array("artifact"), true, true);
+        createCustomTaxonomy('Keyword', array("artifact"), true);
+        // createCustomTaxonomy( 'File Type', array("artifact"), true, true);
+        createCustomTaxonomy('Genre', array("artifact"), true);
+        createCustomTaxonomy('Author', array("artifact"), false);
+        createCustomTaxonomy('Citation', array("artifact"), true);
+        createCustomTaxonomy('Related Work', array("artifact"), true);
         
-        createTaxonomy('Collection Type', array("collection"), true, true);
+        createCustomTaxonomy('Collection Type', array("collection"), true);
     }
 
     public function defaultArtifactKeywordValues()
