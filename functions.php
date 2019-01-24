@@ -15,8 +15,8 @@ use Roots\Sage\Container;
  * @param string $title
  */
 $sage_error = function ($message, $subtitle = '', $title = '') {
-    $title   = $title ?: __('Sage &rsaquo; Error', 'sage');
-    $footer  = '<a href="https://roots.io/sage/docs/">roots.io/sage/docs/</a>';
+    $title = $title ?: __('Sage &rsaquo; Error', 'sage');
+    $footer = '<a href="https://roots.io/sage/docs/">roots.io/sage/docs/</a>';
     $message = "<h1>{$title}<br><small>{$subtitle}</small></h1><p>{$message}</p><p>{$footer}</p>";
     wp_die($message, $title);
 };
@@ -38,8 +38,8 @@ if (version_compare('4.7.0', get_bloginfo('version'), '>=')) {
 /**
  * Ensure dependencies are loaded
  */
-if (! class_exists('Roots\\Sage\\Container')) {
-    if (! file_exists($composer = __DIR__ . '/vendor/autoload.php')) {
+if (!class_exists('Roots\\Sage\\Container')) {
+    if (!file_exists($composer = __DIR__ . '/vendor/autoload.php')) {
         $sage_error(
             __('You must run <code>composer install</code> from the Sage directory.', 'sage'),
             __('Autoloader not found.', 'sage')
@@ -57,7 +57,7 @@ if (! class_exists('Roots\\Sage\\Container')) {
 array_map(
     function ($file) use ($sage_error) {
         $file = "./app/{$file}.php";
-        if (! locate_template($file, true, true)) {
+        if (!locate_template($file, true, true)) {
             $sage_error(sprintf(__('Error locating <code>%s</code> for inclusion.', 'sage'), $file), 'File not found');
         }
     },
@@ -66,12 +66,12 @@ array_map(
         'setup',
         'filters',
         'admin',
-        'digiped-keyword',
-        'digiped-artifact',
+        // 'digiped-keyword',
+        // 'digiped-artifact',
         'digiped-collection',
         'digiped-collections-rest-controller',
         'custom-post-type',
-        'custom-taxonomy'
+        'custom-taxonomy',
     ]
 );
 
@@ -99,54 +99,56 @@ Container::getInstance()
             return new Config(
                 [
                     'assets' => require __DIR__ . '/config/assets.php',
-                    'theme'  => require __DIR__ . '/config/theme.php',
-                    'view'   => require __DIR__ . '/config/view.php',
+                    'theme' => require __DIR__ . '/config/theme.php',
+                    'view' => require __DIR__ . '/config/view.php',
                 ]
             );
         },
         true
     );
 
-    function cropWords($content, $count, $echo = true) {
-        $words = explode(" ", $content);
-        $somewords = array_slice($words, 0, $count);
-        $smallphrase = strip_tags(rtrim(preg_replace('/[A-Z]+(\.|\,|\.\,),/', '',implode(" ", $somewords)), ', and or . 1'));
-        if(!$echo) {
-            return $smallphrase;	
-        }
-        echo $smallphrase;
-        return true;
+function cropWords($content, $count, $echo = true)
+{
+    $words = explode(" ", $content);
+    $somewords = array_slice($words, 0, $count);
+    $smallphrase = strip_tags(rtrim(preg_replace('/[A-Z]+(\.|\,|\.\,),/', '', implode(" ", $somewords)), ', and or . 1'));
+    if (!$echo) {
+        return $smallphrase;
+    }
+    echo $smallphrase;
+    return true;
+}
+
+function change_search_url()
+{
+    if (is_search() && !empty($_GET['s'])) {
+        wp_redirect(home_url("/search/") . urlencode(get_query_var('s')));
+        exit();
+    }
+}
+add_action('template_redirect', 'change_search_url');
+
+function queryfilter($query)
+{
+    // for keyword archive page
+    if (is_post_type_archive('digiped_keyword')) {
+        // Display 50 posts for a custom post type called 'movie'
+        $query->set('posts_per_page', -1);
+        return;
     }
 
-    function change_search_url() {
-        if ( is_search() && ! empty( $_GET['s'] ) ) {
-            wp_redirect( home_url( "/search/" ) . urlencode( get_query_var( 's' ) ) );
-            exit();
-        }   
-    }
-    add_action( 'template_redirect', 'change_search_url' );
-
-    function queryfilter($query) {
-        // for keyword archive page
-        if ( is_post_type_archive( 'digiped_keyword' ) ) {
-            // Display 50 posts for a custom post type called 'movie'
-            $query->set( 'posts_per_page', -1 );
-            return;
-        }
-
-        //for search
-        if ($query->is_search && !is_admin() ) {
-            $query->set('post_type',array('digiped_artifact','digiped_keyword', 'artifact', 'collection'));
-            $query->set('orderby', array('post_title' => 'ASC'));
-            $query->set( 'posts_per_page', '100' );
-            return $query;
-        }
-     
+    //for search
+    if ($query->is_search && !is_admin()) {
+        $query->set('post_type', array('digiped_artifact', 'digiped_keyword', 'artifact', 'collection'));
+        $query->set('orderby', array('post_title' => 'ASC'));
+        $query->set('posts_per_page', '100');
         return $query;
     }
-     
-    add_filter('pre_get_posts','queryfilter');
 
+    return $query;
+}
+
+add_filter('pre_get_posts', 'queryfilter');
 
 function createCustomPostType($post_type_name, $args)
 {
@@ -161,7 +163,6 @@ function createCustomPostType($post_type_name, $args)
     //required for gutenberg
     //$args['show_in_rest'] = true;
 
-
     // Registering your Custom Post Type
     register_post_type($post_type_name, $args);
 }
@@ -171,29 +172,41 @@ function createCustomTaxonomy($tax_name, $post_types = array("post"), $is_hierar
 
     if (!$labels) {
         $labels = array(
-            'name' => __($tax_name, 'tax_'.$tax_name),
-            'singular_name' => __($tax_name, 'tax_'.$tax_name),
-            'search_items' => __('Search ' . 'tax_'.$tax_name),
-            'all_items' => __('All ' . 'tax_'.$tax_name),
-            'edit_item' => __('Edit ' . 'tax_'.$tax_name),
-            'update_item' => __('Update ' . 'tax_'.$tax_name),
-            'add_new_item' => __('Add New ' . 'tax_'.$tax_name),
-            'new_item_name' => __('New ' . $tax_name . ' Name'),
+            'name' => __($tax_name, 'tax_' . $tax_name),
+            'singular_name' => __($tax_name, 'tax_' . $tax_name),
+            'search_items' => __('Search ' . $tax_name),
+            'all_items' => __('All ' . $tax_name),
+            'edit_item' => __('Edit ' . $tax_name),
+            'update_item' => __('Update ' . $tax_name),
+            'add_new_item' => __('Add New ' . $tax_name),
+            'new_item_name' => __('New ' . ' Name'),
             'parent_item' => __('Parent Topic'),
-            'parent_item_colon' =>  __('Parent Topic:')
+            'parent_item_colon' => __('Parent Topic:'),
         );
     }
-    
+
     register_taxonomy(strtolower(str_replace(" ", "_", $tax_name)), $post_types, array(
         'hierarchical' => $is_hierarchical,
         'labels' => $labels,
         'show_ui' => $show_ui,
-        'show_in_menu' => false,
+        'show_in_menu' => true,
         'show_in_nav_menu' => false,
         'show_in_admin_bar' => true,
         'show_admin_column' => true,
+        'public' => true,
+        'has_archive' => true,
         'query_var' => true,
         'show_in_rest' => true,
-        'rewrite' => array('slug' => $tax_name),
+        'rewrite' => array(
+            'slug' => strtolower(str_replace("_", "-", $tax_name)),
+            'with_front' => false,
+        ),
     ));
+}
+
+add_action('init', 'custom_taxonomy_flush_rewrite');
+function custom_taxonomy_flush_rewrite()
+{
+    global $wp_rewrite;
+    $wp_rewrite->flush_rules();
 }

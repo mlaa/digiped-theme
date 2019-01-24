@@ -6,7 +6,6 @@
  */
 class CustomPostType
 {
-    
     public function init()
     {
         $this->doPostTypes();

@@ -1,5 +1,4 @@
 @extends('layouts.app')
-<?= __FILE__ ?>
 @section('content')
 <div @php(post_class('digi-keyword-page'))>
   <div class=" mt5">

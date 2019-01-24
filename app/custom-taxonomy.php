@@ -12,16 +12,115 @@ class CustomTaxonomy
         $this->doTaxonomies();
         $this->defaultArtifactGenreValues();
         $this->defaultArtifactKeywordValues();
+        $this->actions();
     }
     
+    public function actions()
+    {
+        add_action('created_author', array( $this, 'saveTaxMeta'), 10, 2);
+        add_action('author_add_form_fields', array( $this, 'addTaxMeta'), 10, 2);
+        add_action('author_edit_form_fields', array( $this, 'updateTaxMeta'), 10, 2);
+        add_action('edited_author', array( $this, 'updateTaxMeta'), 10, 2);
+    }
+
+    public function saveTaxMeta($term_id, $tt_id)
+    {
+        if (isset($_POST['first_name']) && '' !== $_POST['first_name']) {
+            add_term_meta($term_id, 'first_name', $_POST['first_name'], true);
+        }
+        if (isset($_POST['last_name']) && '' !== $_POST['last_name']) {
+            add_term_meta($term_id, 'last_name', $_POST['last_name'], true);
+        }
+        if (isset($_POST['affiliations']) && '' !== $_POST['affiliations']) {
+            add_term_meta($term_id, 'affiliations', $_POST['affiliations'], true);
+        }
+    }
+
+    public function addTaxMeta()
+    {
+        ?>
+        <div class="form-field">
+            <label for="first_name"><?php _e('First Name', $this->plugin_name); ?></label>
+            <p>
+                    <input type="text" class="author-first-name"
+                           id="first_name" name="first_name"
+                           value="<?= $first_name; ?>"/>
+            </p>
+        </div>
+        <div class="form-field">
+            <label for="last_name"><?php _e('Last Name', $this->plugin_name); ?></label>
+            <p>
+                <input  type="text" class="author-last-name"
+                        id="last_name" name="last_name"
+                        value="<?= $last_name; ?>"/>
+           </p>
+            
+        </div>
+        <div class="form-field">
+            <label for="affiliations"><?php _e('Affiliations', $this->plugin_name); ?></label>
+            <p>
+                <input  type="text" class="author-affiliations"
+                        id="affiliations" name="affiliations"
+                        value="<?= $affiliations; ?>"/>
+            </p>
+        </div>
+        <?php
+    }
+    
+    public function updateTaxMeta($term, $taxonomy)
+    {
+        $first_name = get_term_meta($term->term_id, 'first_name', true);
+        $last_name = get_term_meta($term->term_id, 'last_name', true);
+        $affiliations = get_term_meta($term->term_id, 'affiliations', true);
+        ?>
+        <tr class="form-field">
+            <th scope="row">
+                <label for="first_name"><?php _e('First Name', $this->plugin_name); ?></label>
+            </th>
+            <td>
+                <p>
+                    <input type="text" class="author-first-name"
+                           id="first_name" name="first_name"
+                           value="<?= $first_name; ?>"/>
+                </p>
+            </td>
+        </tr>
+        <tr class="form-field">
+            <th scope="row">
+                <label for="last_name"><?php _e('Last Name', $this->plugin_name); ?></label>
+            </th>
+            <td>
+                <p>
+                    <input type="text" class="author-last-name"
+                           id="last_name" name="last_name"
+                           value="<?= $last_name; ?>"/>
+                </p>
+            </td>
+        </tr>
+        <tr class="form-field">
+            <th scope="row">
+                <label for="affiliations"><?php _e('Affiliations', $this->plugin_name); ?></label>
+            </th>
+            <td>
+                <p>
+                    <input type="text" class="author-affiliations"
+                           id="affiliations" name="affiliations"
+                           value="<?= $affiliations; ?>"/>
+                </p>
+            </td>
+        </tr>
+        <?php
+    }
+
+
     public function doTaxonomies()
     {
         createCustomTaxonomy('Keyword', array("artifact"), true);
         // createCustomTaxonomy( 'File Type', array("artifact"), true, true);
         createCustomTaxonomy('Genre', array("artifact"), true);
         createCustomTaxonomy('Author', array("artifact"), false);
-        createCustomTaxonomy('Citation', array("artifact"), true);
-        createCustomTaxonomy('Related Work', array("artifact"), true);
+        createCustomTaxonomy('Citation', array("artifact"), false);
+        createCustomTaxonomy('Related Work', array("artifact"), false);
         
         createCustomTaxonomy('Collection Type', array("collection"), true);
     }
