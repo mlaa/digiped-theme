@@ -94,7 +94,6 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller
         $item = $this->prepare_item_for_database($request);
 
         $collection = DigiPed_Collection::create($item['name']);
-
         if ($collection) {
             $data = $this->prepare_item_for_response($collection, $request);
             return new WP_REST_Response($data, 201);
@@ -137,15 +136,17 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller
     public function update_item($request)
     {
         $url_params = $request->get_url_params();
+        $collection_id = $url_params['collection_id'];
+        $artifact_id = $url_params['artifact_id'];
 
-        $collection = new DigiPed_Collection($url_params['collection_id']);
-
-        if (isset($url_params['artifact_id'])) {
-            if ('PUT' === $request->get_method()) {
-                $result = $collection->add_artifact($url_params['artifact_id']);
+        $collection = new DigiPed_Collection($collection_id);
+        $method = $request->get_method();
+        if (isset($artifact_id)) {
+            if ('PUT' === $method) {
+                $result = $collection->add_artifact($artifact_id);
             }
-            if ('DELETE' === $request->get_method()) {
-                $result = $collection->remove_artifact($url_params['artifact_id']);
+            if ('DELETE' === $method) {
+                $result = $collection->remove_artifact($artifact_id);
             }
         } else {
             // TODO handle updating name (etc?)
@@ -170,8 +171,8 @@ class DigiPed_Collections_REST_Controller extends WP_REST_Controller
         $url_params = $request->get_url_params();
 
         $collection = new DigiPed_Collection($url_params['collection_id']);
-
-        $result = $collection->destroy();
+        $artifact_id = $url_params['artifact_id'];
+        $result = $collection->remove_artifact($artifact_id);
 
         if ($result) {
             return new WP_REST_Response($result, 200);

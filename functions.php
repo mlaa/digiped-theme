@@ -130,16 +130,9 @@ add_action('template_redirect', 'change_search_url');
 
 function queryfilter($query)
 {
-    // for keyword archive page
-    if (is_post_type_archive('digiped_keyword')) {
-        // Display 50 posts for a custom post type called 'movie'
-        $query->set('posts_per_page', -1);
-        return;
-    }
-
     //for search
     if ($query->is_search && !is_admin()) {
-        $query->set('post_type', array('digiped_artifact', 'digiped_keyword', 'artifact', 'collection'));
+        $query->set('post_type', array('artifact'));
         $query->set('orderby', array('post_title' => 'ASC'));
         $query->set('posts_per_page', '100');
         return $query;

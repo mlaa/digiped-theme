@@ -11,25 +11,25 @@
     <div class="fl f6 mt1">
     <?php
       global $wp_query;
-      $types = array();                 
+      $types = array('keyword'=>0, 'artifact'=>0);                 
       if( !empty( $wp_query->posts ) ) {
           foreach ($wp_query->posts as $p ) {
-            if(empty( $types[$p->post_type] )) {
-              //initiate with zero to allow for integer counting.
-              $types[$p->post_type] =  0;
+            $genre = wp_get_post_terms($p->ID, 'genre');
+            if($genre[0]->slug == "curation-statement") {
+              $types['keyword']++;
+            } else{
+              $types['artifact']++;
             }
-            $types[$p->post_type]++;
           }
-        $keyword = $types['digiped_keyword']?:0;
-        $artifacts = $types['digiped_artifact']?:0;
+        $keyword = $types['keyword'];
+        $artifacts = $types['artifact'];
         echo  "$keyword keyword and $artifacts artifacts match your search.";
       }
     ?>
     </div>
     <br style="clear:both"/>
     <br style="clear:both"/>
-    <div><code>In an effort to get the most applicable results to the top, I'm thinking about searching only in Title, Tags, and Keyword. With a secondary full body text search that is deduped and appended to bottom of results. @JB #Discuss</code></div>
-  </div>
+     </div>
   <br style="clear:both"/>
   <div class="cf mt3 keyword-wrapper">
     <div class="controls f7">

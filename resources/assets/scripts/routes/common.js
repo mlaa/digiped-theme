@@ -14,6 +14,11 @@ export default {
         Collection.toggle(inst);
       });
     });
+
+    $("article").each(function () {
+      $(this).addClass('panel');
+    });
+
   },
   finalize() {
     // JavaScript to be fired on all pages, after page specific JS is fired
@@ -31,6 +36,24 @@ export default {
       }
 
       $(this).html(button_text);
+    });
+
+    // JavaScript to be fired on the home page, after the init JS
+    console.log('here');
+    $(".view-list").click(function (e) {
+      e.preventDefault();
+      $("article").each(function () {
+        $(this).addClass('panel');
+      });
+      window.dpGrids[0].refreshItems().layout();
+    });
+
+    $(".view-module").click(function (e) {
+      e.preventDefault();
+      $(".panel").each(function () {
+        $(this).removeClass('panel');
+      });
+      window.dpGrids[0].refreshItems().layout();
     });
 
     $(".read-more-card-link ").click(function (e) {

@@ -47,7 +47,7 @@ export default class Collection extends Grid {
     $(".remove-artifact").click(function (e) {
       e.preventDefault();
       let elem = $(this).closest('article');
-      const collectionId = $(this).closest('.grid').data('collectionId');
+      let collectionId = $(this).closest('.grid').data('collectionId');
 
       $.ajax({
         method: "DELETE",

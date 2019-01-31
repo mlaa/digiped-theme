@@ -43,31 +43,27 @@ class DigiPed_Collection
      *
      * @param string $id Collection ID.
      */
-    function __construct(string $id)
+    public function __construct(string $id)
     {
-        global $wpdb;
+        $args = array(
+            'orderby' => 'comment_karma',
+            'order' => 'ASC',
+            'post_type' => 'collection',
+            'status' => 'all',
+            'post_id' => $id,
+        );
 
-        if (is_user_logged_in()) {
-            $user_meta = get_user_meta(get_current_user_id(), self::USER_META_KEY, true);
-        } else {
-            $result = $wpdb->get_var("
-				SELECT meta_value
-				FROM $wpdb->usermeta
-				WHERE meta_key = '" . self::USER_META_KEY . "'
-				AND meta_value LIKE '%$id%'
-			");
-
-            if ($result) {
-                $user_meta = unserialize($result);
-            } else {
-                throw new Exception("Collection '$id' not found.");
-            }
-        }
-
-        if (isset($user_meta[ $id ])) {
+        $collection = get_post($id);
+        if ($collection) {
+            $comments_query = new WP_Comment_Query;
+            $comments = $comments_query->query($args);
             $this->id = $id;
-            $this->name = $user_meta[ $id ]['name'];
-            $this->artifacts = $user_meta[ $id ]['artifacts'];
+            $this->name = $collection->post_title;
+            $artifacts = array();
+            foreach ($comments as $artifact) {
+                $artifacts[] = $artifact->comment_content;
+            }
+            $this->artifacts = $artifacts;
         } else {
             throw new Exception("Collection '$id' not found.");
         }
@@ -79,38 +75,62 @@ class DigiPed_Collection
      * @param string $key Property name.
      * @return mixed
      */
-    function __get(string $key)
+    public function __get(string $key)
     {
         return $this->$key;
     }
 
     /**
-     * Save this collection to user meta.
+     * Save this artifact to collection
      *
      * @param string $key   Property name.
      * @param mixed  $value Property value.
      * @return bool
      */
-    function save()
+    private function saveArtifact()
     {
-        $user_meta = get_user_meta(get_current_user_id(), self::USER_META_KEY, true);
+        $commentdata = array(
+            'comment_post_ID' => $this->id,
+            'comment_type' => 'artifact',
+            'comment_approved' => 1,
+            'comment_content' => $this->artifacts,
+            'user_id' => get_current_user_id(),
+        );
 
-        if ($user_meta) {
-            $result = true;
-
-            $user_meta[ $this->id ] = [
-                'name' => $this->name,
-                'artifacts' => $this->artifacts,
-            ];
-
-            if (get_user_meta(get_current_user_id(), self::USER_META_KEY, true) !== $user_meta) {
-                $result = update_user_meta(get_current_user_id(), self::USER_META_KEY, $user_meta);
-            }
-
-            return $result;
-        } else {
+        //Insert new comment and get the comment ID
+        $comment_id = wp_new_comment($commentdata);
+        if (!$comment_id) {
             throw new Exception("Unable to save collection '$id'.");
         }
+        return $comment_id;
+    }
+
+    // remove artifact from collection
+    private function removeArtifact()
+    {
+        $args = array(
+            'post_type' => 'collection',
+            'ID' => $this->artifacts,
+        );
+
+        $comments_query = new WP_Comment_Query;
+        $comment = $comments_query->query($args);
+        if ($comment) {
+            $delete = wp_delete_comment($comment[0]->comment_ID, true);
+        } else {
+            throw new Exception("Unable to save collection '$this->id'.");
+        }
+        return $comment->comment_ID;
+    }
+
+    private function removeCollection()
+    {
+        return wp_delete_post($this->id, true);
+    }
+
+    private static function saveCollection($name)
+    {
+        return wp_insert_post(array('post_status' => 'publish', 'post_type' => 'collection','post_title' => $name), false);
     }
 
     /**
@@ -118,16 +138,9 @@ class DigiPed_Collection
      *
      * @return bool
      */
-    function destroy()
+    private function destroy()
     {
-        $user_meta = get_user_meta(get_current_user_id(), self::USER_META_KEY, true);
-
-        if ($user_meta) {
-            unset($user_meta[ $this->id ]);
-            return update_user_meta(get_current_user_id(), self::USER_META_KEY, $user_meta);
-        } else {
-            throw new Exception("Unable to destroy collection '$id'.");
-        }
+        $this->removeCollection();
     }
 
     /**
@@ -136,10 +149,10 @@ class DigiPed_Collection
      * @param int $artifact_id Artifact ID.
      * @return bool
      */
-    function add_artifact(int $artifact_id)
+    public function add_artifact(int $artifact_id)
     {
-        $this->artifacts = array_unique(array_values(array_merge($this->artifacts, [ $artifact_id ])));
-        return $this->save();
+        $this->artifacts = $artifact_id;
+        return $this->saveArtifact();
     }
 
     /**
@@ -148,10 +161,29 @@ class DigiPed_Collection
      * @param int $artifact_id Artifact ID.
      * @return bool
      */
-    function remove_artifact(int $artifact_id)
+    public function remove_artifact(int $artifact_id)
     {
-        $this->artifacts = array_unique(array_values(array_diff($this->artifacts, [ $artifact_id ])));
-        return $this->save();
+        $this->artifacts = $artifact_id;
+        return $this->removeArtifact();
+    }
+
+    public static function list()
+    {
+        
+        $args = array(
+            'post_type' => 'collection',
+            'post_author' => get_current_user_id(),
+            'orderby' => 'post_date',
+            'order' => 'DESC',
+        );
+        $collection_posts = get_posts($args);
+        $collections = [];
+
+        foreach ($collection_posts as $post) {
+            $collections[] = new self($post->ID);
+        }
+
+        return $collections;
     }
 
     /**
@@ -160,40 +192,10 @@ class DigiPed_Collection
      * @param string $name Collection name.
      * @return DigiPed_Collection
      */
-    static function create(string $name)
+    public static function create(string $name)
     {
-        $id = uniqid();
-
-        $user_meta = get_user_meta(get_current_user_id(), self::USER_META_KEY, true);
-
-        if (! $user_meta) {
-            $user_meta = [];
-        }
-
-        $user_meta[ $id ] = [
-            'name'      => $name,
-            'artifacts' => [],
-        ];
-
-        update_user_meta(get_current_user_id(), self::USER_META_KEY, $user_meta);
-
-        return new self($id);
-    }
-
-    /**
-     * Get all collections for the current user.
-     *
-     * @return array List of DigiPed_Collection objects.
-     */
-    static function list()
-    {
-        $user_meta   = get_user_meta(get_current_user_id(), self::USER_META_KEY, true);
-        $collections = [];
-
-        foreach ($user_meta as $id => $attrs) {
-            $collections[] = new self($id);
-        }
-
-        return $collections;
+        $id = self::saveCollection($name);
+        $c = new self($id);
+        return $c;
     }
 }

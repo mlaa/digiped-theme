@@ -55,24 +55,11 @@ export default class Grid {
   // Handler for Muuri 'receive' event.
   // TODO success/error handling/messaging
   receive(data) {
-    const artifactID = $(data.item.getElement()).data('id');
-    const fromCollectionID = $(data.fromGrid.getElement()).data('collection-id');
-    const toCollectionID = $(data.toGrid.getElement()).data('collection-id');
+    let artifactID = $(data.item.getElement()).data('id');
+    let fromCollectionID = $(data.fromGrid.getElement()).data('collection-id');
+    let toCollectionID = $(data.toGrid.getElement()).data('collection-id');
 
-    var removeArtifact = () => {
-      var dfd = $.Deferred();
-      if (fromCollectionID) {
-        $.ajax({
-          method: "DELETE",
-          url: '/wp-json/digiped/v1/collections/' + fromCollectionID + '/artifact/' + artifactID,
-        }).then(dfd.resolve);
-      } else {
-        dfd.resolve();
-      }
-      return dfd.promise();
-    }
-
-    var addArtifact = () => {
+    let addArtifact = () => {
       if (toCollectionID) {
         $.ajax({
           method: "PUT",
@@ -90,8 +77,12 @@ export default class Grid {
       }
     }
 
-    if (fromCollectionID !== toCollectionID) {
-      removeArtifact().done(addArtifact);
+    if (data.fromGrid._id === 1) {
+      if (fromCollectionID !== toCollectionID) {
+        //no dupes
+        addArtifact();
+      }
     }
+
   }
 }
