@@ -39,32 +39,29 @@ class CustomTaxonomy
     public function addTaxMeta()
     {
         ?>
-        <div class="form-field">
-            <label for="first_name"><?php _e('First Name', $this->plugin_name); ?></label>
-            <p>
-                    <input type="text" class="author-first-name"
-                           id="first_name" name="first_name"
-                           value="<?= $first_name; ?>"/>
-            </p>
-        </div>
-        <div class="form-field">
-            <label for="last_name"><?php _e('Last Name', $this->plugin_name); ?></label>
-            <p>
-                <input  type="text" class="author-last-name"
-                        id="last_name" name="last_name"
-                        value="<?= $last_name; ?>"/>
-           </p>
-            
-        </div>
-        <div class="form-field">
-            <label for="affiliations"><?php _e('Affiliations', $this->plugin_name); ?></label>
-            <p>
-                <input  type="text" class="author-affiliations"
-                        id="affiliations" name="affiliations"
-                        value="<?= $affiliations; ?>"/>
-            </p>
-        </div>
-        <?php
+<div class="form-field">
+	<label for="first_name">
+		<?php _e('First Name', $this->plugin_name); ?></label>
+	<p>
+		<input type="text" class="author-first-name" id="first_name" name="first_name" value="<?= $first_name; ?>" />
+	</p>
+</div>
+<div class="form-field">
+	<label for="last_name">
+		<?php _e('Last Name', $this->plugin_name); ?></label>
+	<p>
+		<input type="text" class="author-last-name" id="last_name" name="last_name" value="<?= $last_name; ?>" />
+	</p>
+
+</div>
+<div class="form-field">
+	<label for="affiliations">
+		<?php _e('Affiliations', $this->plugin_name); ?></label>
+	<p>
+		<input type="text" class="author-affiliations" id="affiliations" name="affiliations" value="<?= $affiliations; ?>" />
+	</p>
+</div>
+<?php
     }
     
     public function updateTaxMeta($term, $taxonomy)
@@ -73,43 +70,40 @@ class CustomTaxonomy
         $last_name = get_term_meta($term->term_id, 'last_name', true);
         $affiliations = get_term_meta($term->term_id, 'affiliations', true);
         ?>
-        <tr class="form-field">
-            <th scope="row">
-                <label for="first_name"><?php _e('First Name', $this->plugin_name); ?></label>
-            </th>
-            <td>
-                <p>
-                    <input type="text" class="author-first-name"
-                           id="first_name" name="first_name"
-                           value="<?= $first_name; ?>"/>
-                </p>
-            </td>
-        </tr>
-        <tr class="form-field">
-            <th scope="row">
-                <label for="last_name"><?php _e('Last Name', $this->plugin_name); ?></label>
-            </th>
-            <td>
-                <p>
-                    <input type="text" class="author-last-name"
-                           id="last_name" name="last_name"
-                           value="<?= $last_name; ?>"/>
-                </p>
-            </td>
-        </tr>
-        <tr class="form-field">
-            <th scope="row">
-                <label for="affiliations"><?php _e('Affiliations', $this->plugin_name); ?></label>
-            </th>
-            <td>
-                <p>
-                    <input type="text" class="author-affiliations"
-                           id="affiliations" name="affiliations"
-                           value="<?= $affiliations; ?>"/>
-                </p>
-            </td>
-        </tr>
-        <?php
+<tr class="form-field">
+	<th scope="row">
+		<label for="first_name">
+			<?php _e('First Name', $this->plugin_name); ?></label>
+	</th>
+	<td>
+		<p>
+			<input type="text" class="author-first-name" id="first_name" name="first_name" value="<?= $first_name; ?>" />
+		</p>
+	</td>
+</tr>
+<tr class="form-field">
+	<th scope="row">
+		<label for="last_name">
+			<?php _e('Last Name', $this->plugin_name); ?></label>
+	</th>
+	<td>
+		<p>
+			<input type="text" class="author-last-name" id="last_name" name="last_name" value="<?= $last_name; ?>" />
+		</p>
+	</td>
+</tr>
+<tr class="form-field">
+	<th scope="row">
+		<label for="affiliations">
+			<?php _e('Affiliations', $this->plugin_name); ?></label>
+	</th>
+	<td>
+		<p>
+			<input type="text" class="author-affiliations" id="affiliations" name="affiliations" value="<?= $affiliations; ?>" />
+		</p>
+	</td>
+</tr>
+<?php
     }
 
 
