@@ -57,7 +57,7 @@
               <?php 
               wp_reset_query(); 
               global $wp_query;
-              $args = array_merge( $wp_query->query_vars, array( 'ID' => '-' . $currStatementID ) );
+              $args = array_merge( $wp_query->query_vars, array( 'post__not_in'  => array($currStatementID)) );
               query_posts( $args );
               ?>
               @while (have_posts()) @php(the_post())
