@@ -33,9 +33,9 @@ class CustomPostType
                     'not_found_in_trash' => __('Not found in Trash', 'digiped'),),
                 'description' => __('Learning space\'s active Artifacts', 'digiped'),
                 // Features this CPT supports in Post Editor
-                'supports' => array('title', 'thumbnail', 'editor'),
+                'supports' => array('title', 'thumbnail', 'editor', 'custom-fields'),
                 // You can associate this CPT with a taxonomy or custom taxonomy.
-                'taxonomies' => array('Keyword'),
+                'taxonomies' => array('Keyword', 'post_tag' ),
                 'hierarchical' => false,
                 'public' => true,
                 'show_ui' => true,

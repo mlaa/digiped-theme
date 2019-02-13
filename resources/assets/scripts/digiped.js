@@ -87,8 +87,6 @@ export default class DigiPed {
           $(e.target).parents('.options').find('a').removeClass('active');
           $(e.target).addClass('active');
           window.dpGrids[0].filter((item) => {
-            console.log($(item.getElement()).data(taxonomy));
-            console.log(e.target);
             return $(item.getElement()).data(taxonomy).includes($(e.target).html());
           });
         }

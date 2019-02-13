@@ -10,8 +10,8 @@ class CustomTaxonomy
     public function init()
     {
         $this->doTaxonomies();
-        $this->defaultArtifactGenreValues();
-        $this->defaultArtifactKeywordValues();
+        //$this->defaultArtifactGenreValues();
+        //$this->defaultArtifactKeywordValues();
         $this->actions();
     }
     

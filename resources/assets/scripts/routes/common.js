@@ -39,7 +39,6 @@ export default {
     });
 
     // JavaScript to be fired on the home page, after the init JS
-    console.log('here');
     $(".view-list").click(function (e) {
       e.preventDefault();
       $("article").each(function () {
@@ -60,7 +59,6 @@ export default {
       e.preventDefault();
       let article = $(this).closest('article');
       const post_id = ".post-" + article.data('id');
-      console.log(post_id);
       $(".panel").each(function () {
         $(this).removeClass('panel');
       });

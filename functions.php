@@ -188,6 +188,7 @@ function createCustomTaxonomy($tax_name, $post_types = array("post"), $is_hierar
         'show_admin_column' => true,
         'public' => true,
         'has_archive' => true,
+        'update_count_callback' => '_update_post_term_count',
         'query_var' => true,
         'show_in_rest' => true,
         'rewrite' => array(
